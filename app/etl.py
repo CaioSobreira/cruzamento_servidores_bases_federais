@@ -5,6 +5,7 @@ from lxml import etree
 import datetime
 import pandas as pd
 from zipfile import ZipFile
+import os
 from bd import get_conn_psycopg2, get_engine_sqlalchemy
 
 _url_origem_dados = 'https://portaldatransparencia.gov.br/origem-dos-dados'
@@ -80,23 +81,21 @@ def _verifica_tabela_atualizada(engine, data_atualiza, nome_tabela, nome_coluna)
     return True
 
 def _download_csv(url, data_atualiza, sufixo_arquivo):
-    print(url, sufixo_arquivo)
     url_download = url + f'/{data_atualiza.strftime("%Y%m")}'
 
     resp = requests.get(url_download)
 
     arq_salvar=f'download/{data_atualiza.strftime("%Y%m")}_{sufixo_arquivo}.zip'
 
-    print(arq_salvar)
-
     with open(arq_salvar, "wb") as f:
         f.write(resp.content)
 
     arq_csv=f'{data_atualiza.strftime("%Y%m")}_{sufixo_arquivo}.csv'
-    print(arq_csv)
 
     with ZipFile(arq_salvar) as zf:
         zf.extract(arq_csv, path='download')
+
+    os.remove(arq_salvar)
 
 
 def _carrega_bd(conn, data_atualiza, sufixo_arquivo, nome_tabela, lista_colunas_indices):
@@ -125,6 +124,8 @@ def _carrega_bd(conn, data_atualiza, sufixo_arquivo, nome_tabela, lista_colunas_
         for coluna_indice in lista_colunas_indices:
             cur.execute(f'CREATE INDEX {nome_tabela}_{coluna_indice}_idx ON benef_federais.{nome_tabela} ({coluna_indice});')
             conn.commit()
+        
+        os.remove(arq_csv)
 
 def etl_bases_federais():
     conn = get_conn_psycopg2()
