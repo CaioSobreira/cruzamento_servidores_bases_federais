@@ -13,6 +13,6 @@ db_name=config('DB_NAME')
 def get_conn_psycopg2():
     return psycopg2.connect(f'host={db_host} dbname={db_name} port={db_port} user={db_user} password={db_password}')
 
-#A CONEXÃO VIA SQLALCHEMY/PANDAS SERÁ UTILIZADA PARA AS QUERIES
+#A CONEXÃO VIA SQLALCHEMY/PANDAS SERÁ UTILIZADA PARA OS CRUZAMENTOS, POIS FACILITA A EXPORTAÇÃO DOS RESULTADOS
 def get_engine_sqlalchemy():
     return sqlalchemy.create_engine(f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}')
