@@ -4,7 +4,7 @@ from lxml import etree
 import datetime
 from zipfile import ZipFile
 import os
-from bd import get_conn_psycopg2´
+from bd import get_conn_psycopg2
 
 _url_origem_dados = 'https://portaldatransparencia.gov.br/origem-dos-dados'
 
