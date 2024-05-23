@@ -3,11 +3,23 @@ services:
   app :
     build: ./app
     volumes:
-    - ./app/servidores:/app/servidores
-    - ./app/resultados:/app/resultados
+      - ./app/servidores:/app/servidores
+      - ./app/resultados:/app/resultados
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     build: ./database/
     ports:
       - "5432:5432"
+    command: >
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+      - ./database/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
