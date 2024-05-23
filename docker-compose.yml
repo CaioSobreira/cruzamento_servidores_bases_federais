@@ -1,7 +1,10 @@
 version: "3.8"
 services:
-  #app :
-  #  build: ./app
+  app :
+    build: ./app
+    volumes:
+    - ./app/servidores:/app/servidores
+    - ./app/resultados:/app/resultados
   db:
     build: ./database/
     ports:
