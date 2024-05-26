@@ -56,4 +56,4 @@ Quando o projeto é executado no modo teste (preenchendo a variável `MODO_TESTE
 
 Neste modo, após carregar as bases de dados federais, o script irá selecionar aleatoriamente 10 números NIS de cada uma das 3 bases federais e gerar o arquivo `servidores_cruzamento.csv` **com dados fictícios, apenas para fins de simulação, para que o usuário possa ver o script em execução e visualizar como ficaria o relatório de saída**.
 
-OBS: Caso o usuário queira trocar a ferramenta do modo normal para o modo teste, e vice-versa, bem como realizar qualquer outra alteração no arquivo `.env`, deverá executar em seguida o docker compose a partir do comando `docker compose up --build`, para forçar o script a reconstruir os containers com as novas configurações.
+OBS: Caso o usuário queira trocar a ferramenta do modo normal para o modo teste, e vice-versa, bem como realizar qualquer outra alteração no arquivo `.env`, deverá executar em seguida o Docker Compose a partir do comando `docker compose up --build`, para forçar o script a reconstruir os containers com as novas configurações.
