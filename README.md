@@ -27,7 +27,7 @@ Após clonar o repositório, o usuário deverá gerar uma cópia do arquivo `.en
 
 OBS: Caso o usuário queira apenas testar o funcionamento, sem fornecer dados de servidores reais para cruzamento, poderá utilizar a ferramenta no [modo teste](#utilizando-no-modo-teste). Para isto, deverá preencher a variável `MODO_TESTE=True`. Se optar por fazer isto, a etapa seguinte, de criar o arquivo CSV de servidores, é desnecessária.
 
-Em seguida deverá colocar dentro do diretório `app/servidores` um arquivo CSV de nome `servidores_cruzamento.csv`, com estrutura detalhada a seguir:
+Depois de configurar o `.env`, deverá colocar dentro do diretório `app/servidores` um arquivo CSV de nome `servidores_cruzamento.csv`, com estrutura detalhada a seguir:
 
 - Caractere separador: `;` (ponto-e-vírgula)
 - Encoding: UTF-8
