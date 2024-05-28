@@ -9,7 +9,7 @@ As seguintes bases de dados federais são utilizadas nos cruzamentos:
 
 Os arquivos das respectivas bases são baixados automaticamente dos Dados Abertos do Portal da Transparência do Governo Federal: https://portaldatransparencia.gov.br/download-de-dados
 
-O número do NIS é utilizado como campo chave nos cruzamentos, e portanto, é imprescindível a disponibilidade de uma relação da servidores contendo o número do NIS do ente federativo que irá utilizar esta ferramenta.
+O número do NIS é utilizado como campo chave nos cruzamentos, e portanto, é imprescindível a disponibilidade de uma relação de servidores contendo o número do NIS do ente federativo que irá utilizar esta ferramenta.
 
 O usuário deverá gerar uma relação de servidores em arquivo no formato CSV em layout específico (detalhado abaixo) e colocar em uma pasta do projeto para execução dos cruzamentos.
 
@@ -21,7 +21,7 @@ Este projeto inclui um modo de teste, por meio do qual é realizada uma simulaç
 
 Para execução do projeto é necessário ter instaladas a ferramentas Docker e Docker Compose. 
 
-Como os arquivos CSV baixados e o banco de dados gerado são grandes, recomenda-se a disponibilidade de no mínimo 20 GB de espaço em disco disponível.
+Como os arquivos CSV baixados e o banco de dados gerado são grandes, recomenda-se a disponibilidade de no mínimo 20 GB de espaço em disco.
 
 Após clonar o repositório, o usuário deverá gerar uma cópia do arquivo `.env.example` e nomeá-la como `.env`, dentro do diretório`app`. Caso deseje, pode alterar as variáveis de configuração do banco de dados.
 
