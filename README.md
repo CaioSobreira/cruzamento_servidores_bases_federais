@@ -19,7 +19,7 @@ Este projeto inclui um modo de teste, por meio do qual é realizada uma simulaç
 
 ## Como utilizar
 
-Para execução do projeto é necessário ter instaladas a ferramentas Docker e Docker Compose. 
+Para execução do projeto é necessário ter instaladas as ferramentas Docker e Docker Compose. 
 
 Como os arquivos CSV baixados e o banco de dados gerado são grandes, recomenda-se a disponibilidade de no mínimo 20 GB de espaço em disco.
 
