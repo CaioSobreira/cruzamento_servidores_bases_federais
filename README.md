@@ -40,7 +40,7 @@ Depois de configurar o `.env`, deverá colocar dentro do diretório `app/servido
 
 Após realizar os procedimentos acima, o usuário deve acessar a pasta raiz do projeto e executar o comando `docker compose up`.
 
-A ferramenta irá criar automaticamente containers Docker com toda a infraestrutura necessária, incluindo banco de dados Postgres e projeto Python, baixar e carregar os arquivos do Portal da Transparência, bem como caregar o CSV de servidores fornecido, realizar os cruzamentos e gravar o resultado no arquivo `app/resultados/resultados_cruzamentos.xlsx`
+A ferramenta irá criar automaticamente containers Docker com toda a infraestrutura necessária, incluindo banco de dados Postgres e projeto Python, baixar e carregar os arquivos do Portal da Transparência, bem como carregar o CSV de servidores fornecido, realizar os cruzamentos e gravar o resultado no arquivo `app/resultados/resultados_cruzamentos.xlsx`
 
 Para fins de melhor desempenho, o script cria automaticamente índices nas colunas chave dos cruzamentos (referentes aos números NIS) em cada uma das tabelas.
 
