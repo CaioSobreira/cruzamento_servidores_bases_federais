@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página com CSS e JS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+    <h1>Olá, {{ nome }}!</h1>
+    <button onclick="mostrarMensagem()">Clique aqui</button>
+
+    <h2 style="text-align:center;">Lista de Pessoas</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Cidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pessoa in dados %}
+            <tr>
+                <td>{{ pessoa.nome }}</td>
+                <td>{{ pessoa.idade }}</td>
+                <td>{{ pessoa.cidade }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

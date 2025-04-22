@@ -47,6 +47,36 @@ _bases_federais = {
     }
 }
 
+
+
+def etl_bases_federais():
+    print("######## ETL BASES FEDERAIS INICIADO")
+    conn = get_conn_psycopg2()
+    
+    print("###### VERIFICANDO SE BASES ESTÃO ATUALIZADAS")
+    data_atualiza_bases = _get_data_atualiza_bases(url_origem_dados=_url_origem_dados, strings_busca_xpath_bases=_strings_busca_xpath_bases)
+    nome_schema='benef_federais'
+
+    for nome_base in _bases_federais:
+        base_federal = _bases_federais[nome_base]
+
+        print(f"###### BASE ---------- {nome_base.upper()} ----------")
+
+        data_atualiza = data_atualiza_bases[nome_base]
+        tabela_atualizada = _verifica_tabela_atualizada(conn=conn, data_atualiza=data_atualiza, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], nome_coluna=base_federal['nome_coluna_data_atualiza'])
+
+        if(tabela_atualizada is False):
+            _download_csv(url=base_federal['url'], data_atualiza=data_atualiza, sufixo_arquivo=base_federal['sufixo_arquivo'])
+            path_arq_csv=f'download/{data_atualiza.strftime("%Y%m")}_{base_federal["sufixo_arquivo"]}.csv'
+            _carrega_bd(conn=conn, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], lista_colunas_indices=base_federal['lista_colunas_indices'], path_arq_csv=path_arq_csv, encoding='ISO 8859-1', delimitador=';')
+            _deleta_arquivo(path_arquivo=path_arq_csv)
+
+    conn.close()
+    print(f"######## ETL BASES FEDERAIS FINALIZADO")
+
+
+
+
 def _get_data_atualiza_bases(url_origem_dados, strings_busca_xpath_bases):
     
     headers = {
@@ -154,30 +184,6 @@ def _carrega_bd(conn, nome_schema, nome_tabela, lista_colunas_indices, path_arq_
 def _deleta_arquivo(path_arquivo):
     os.remove(path_arquivo)
 
-def etl_bases_federais():
-    print("######## ETL BASES FEDERAIS INICIADO")
-    conn = get_conn_psycopg2()
-    
-    print("###### VERIFICANDO SE BASES ESTÃO ATUALIZADAS")
-    data_atualiza_bases = _get_data_atualiza_bases(url_origem_dados=_url_origem_dados, strings_busca_xpath_bases=_strings_busca_xpath_bases)
-    nome_schema='benef_federais'
-
-    for nome_base in _bases_federais:
-        base_federal = _bases_federais[nome_base]
-
-        print(f"###### BASE ---------- {nome_base.upper()} ----------")
-
-        data_atualiza = data_atualiza_bases[nome_base]
-        tabela_atualizada = _verifica_tabela_atualizada(conn=conn, data_atualiza=data_atualiza, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], nome_coluna=base_federal['nome_coluna_data_atualiza'])
-
-        if(tabela_atualizada is False):
-            _download_csv(url=base_federal['url'], data_atualiza=data_atualiza, sufixo_arquivo=base_federal['sufixo_arquivo'])
-            path_arq_csv=f'download/{data_atualiza.strftime("%Y%m")}_{base_federal["sufixo_arquivo"]}.csv'
-            _carrega_bd(conn=conn, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], lista_colunas_indices=base_federal['lista_colunas_indices'], path_arq_csv=path_arq_csv, encoding='ISO 8859-1', delimitador=';')
-            _deleta_arquivo(path_arquivo=path_arq_csv)
-
-    conn.close()
-    print(f"######## ETL BASES FEDERAIS FINALIZADO")
 
 def etl_base_servidores():
 

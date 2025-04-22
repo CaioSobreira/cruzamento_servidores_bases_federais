@@ -8,4 +8,5 @@ etl_bases_federais()
 etl_base_servidores()
 executa_cruzamentos()
 
+
 print("########## EXECUÇÃO FINALIZADA")
