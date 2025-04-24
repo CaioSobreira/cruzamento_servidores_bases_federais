@@ -75,8 +75,6 @@ def etl_bases_federais():
     print(f"######## ETL BASES FEDERAIS FINALIZADO")
 
 
-
-
 def _get_data_atualiza_bases(url_origem_dados, strings_busca_xpath_bases):
     
     headers = {
@@ -95,6 +93,7 @@ def _get_data_atualiza_bases(url_origem_dados, strings_busca_xpath_bases):
         data_atualiza_bases[base] = datetime.datetime.strptime(data_atualiza_str, '%m/%Y').date()
     
     return data_atualiza_bases
+
 
 def _verifica_tabela_atualizada(conn, data_atualiza, nome_schema, nome_tabela, nome_coluna):
 
@@ -123,6 +122,8 @@ def _verifica_tabela_atualizada(conn, data_atualiza, nome_schema, nome_tabela, n
 
     return True
 
+
+
 def _download_csv(url, data_atualiza, sufixo_arquivo):
     url_download = url + f'/{data_atualiza.strftime("%Y%m")}'
 
@@ -146,6 +147,7 @@ def _download_csv(url, data_atualiza, sufixo_arquivo):
     print(f"###### ARQUIVO DESCOMPACTADO")
 
     _deleta_arquivo(path_arquivo=arq_salvar)
+
 
 def _carrega_bd(conn, nome_schema, nome_tabela, lista_colunas_indices, path_arq_csv, encoding, delimitador):
     
@@ -181,6 +183,7 @@ def _carrega_bd(conn, nome_schema, nome_tabela, lista_colunas_indices, path_arq_
         
         print(f"###### CARGA DA TABELA CONCLUIDA")
 
+
 def _deleta_arquivo(path_arquivo):
     os.remove(path_arquivo)
 
@@ -207,6 +210,7 @@ def etl_base_servidores():
     
     conn.close()
     print("######## ETL BASE SERVIDORES FINALIZADO")
+
 
 def _gera_csv_teste(conn, path_arq_csv):
 
