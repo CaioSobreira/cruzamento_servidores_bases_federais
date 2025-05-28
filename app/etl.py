@@ -7,6 +7,7 @@ import os
 from bd import get_conn_psycopg2
 from decouple import config
 import csv
+import re
 
 _url_origem_dados = 'https://portaldatransparencia.gov.br/origem-dos-dados'
 
@@ -17,15 +18,7 @@ _strings_busca_xpath_bases = {
 }
 
 _bases_federais = {
-    'novo_bolsa_familia': {
-        'url': 'https://portaldatransparencia.gov.br/download-de-dados/novo-bolsa-familia',
-        'sufixo_arquivo': 'NovoBolsaFamilia',
-        'nome_tabela': 'novo_bolsa_familia',
-        'nome_coluna_data_atualiza': 'mes_competencia',
-        'lista_colunas_indices': [
-            'nis_favorecido'
-        ]
-    },
+    
     'bpc': {
         'url': 'https://portaldatransparencia.gov.br/download-de-dados/bpc',
         'sufixo_arquivo': 'BPC',
@@ -44,7 +37,17 @@ _bases_federais = {
         'lista_colunas_indices': [
             'nis_favorecido'
         ]
-    }
+    },
+    'novo_bolsa_familia': {
+        'url': 'https://portaldatransparencia.gov.br/download-de-dados/novo-bolsa-familia',
+        'sufixo_arquivo': 'NovoBolsaFamilia',
+        'nome_tabela': 'novo_bolsa_familia',
+        'nome_coluna_data_atualiza': 'mes_competencia',
+        'lista_colunas_indices': [
+            'nis_favorecido'
+        ]
+    },
+
 }
 
 
@@ -63,13 +66,16 @@ def etl_bases_federais():
         print(f"###### BASE ---------- {nome_base.upper()} ----------")
 
         data_atualiza = data_atualiza_bases[nome_base]
+       
         tabela_atualizada = _verifica_tabela_atualizada(conn=conn, data_atualiza=data_atualiza, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], nome_coluna=base_federal['nome_coluna_data_atualiza'])
 
         if(tabela_atualizada is False):
             _download_csv(url=base_federal['url'], data_atualiza=data_atualiza, sufixo_arquivo=base_federal['sufixo_arquivo'])
             path_arq_csv=f'download/{data_atualiza.strftime("%Y%m")}_{base_federal["sufixo_arquivo"]}.csv'
+           
             _carrega_bd(conn=conn, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], lista_colunas_indices=base_federal['lista_colunas_indices'], path_arq_csv=path_arq_csv, encoding='ISO 8859-1', delimitador=';')
-            _deleta_arquivo(path_arquivo=path_arq_csv)
+           
+            # _deleta_arquivo(path_arquivo=path_arq_csv)
 
     conn.close()
     print(f"######## ETL BASES FEDERAIS FINALIZADO")
@@ -125,28 +131,69 @@ def _verifica_tabela_atualizada(conn, data_atualiza, nome_schema, nome_tabela, n
 
 
 def _download_csv(url, data_atualiza, sufixo_arquivo):
+
     url_download = url + f'/{data_atualiza.strftime("%Y%m")}'
-
-    print(f"###### BAIXANDO ARQUIVO")
-    resp = requests.get(url_download)
-
+    arq_csv=f'{data_atualiza.strftime("%Y%m")}_{sufixo_arquivo}.csv'
     arq_salvar=f'download/{data_atualiza.strftime("%Y%m")}_{sufixo_arquivo}.zip'
 
-    with open(arq_salvar, "wb") as f:
-        f.write(resp.content)
+    print(url_download)
 
-    print(f"###### DOWNLOAD CONCLUIDO")
+    try:
+        print(f"###### BAIXANDO ARQUIVO")
+        with requests.get(url=url_download, stream=True, timeout=300) as resp:
+            with open(arq_salvar, 'wb') as f:
+                for chunk in resp.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)  
+        
+        # Extrair o zip do arquivo
+        print(f"###### DESCOMPACTANDO ARQUIVO {arq_salvar}")
+        with ZipFile(arq_salvar) as zf:
+            zf.extract(arq_csv, path='download')
+        print(f"###### ARQUIVO DESCOMPACTADO {arq_salvar}")
 
-    arq_csv=f'{data_atualiza.strftime("%Y%m")}_{sufixo_arquivo}.csv'
+        # Apaga o arquivo zip
+        _deleta_arquivo(path_arquivo=arq_salvar)
 
-    print(f"###### DESCOMPACTANDO ARQUIVO")
+    except Exception as erro:
+        print(f'Houve um ERRO ao Baixar ou Descompactar o arquivo - Rotina e ajuste contra o erro: {erro}')
+        # Caso erro, quando o arquivo no site mostra que o base está liberada, mas ainda não foi liberada para download.
+        ## Apagar o arquivo baixado com erro
+        _deleta_arquivo(path_arquivo=arq_salvar)
+        ## Alterar a data para um mês anterior
+        ### extrai a url sem a data do arquivo
+        url_alterada = url_download[:-6]
+        ### extrai da url a data do arquivo
+        ano_mes_url = url_download[-6:]
+        ano_mes_url = _ajuste_mes_download_erro_para_mes_anterior(ano_mes_url)
+        ### Reconstroi a url para baixar o arquivo
+        url_download = f'{url_alterada}{ano_mes_url}'
+        ## Alterar o nome do arquivo salvo
+        arq_salvar=f'download/{ano_mes_url}_{sufixo_arquivo}.zip'
+        ## 
+        arq_csv=f'{ano_mes_url}_{sufixo_arquivo}.csv'
 
-    with ZipFile(arq_salvar) as zf:
-        zf.extract(arq_csv, path='download')
+        print(f"###### BAIXANDO ARQUIVO {url_download}")
+        # Baixar arquivo de um mês anterior
+        with requests.get(url=url_download, stream=True, timeout=300) as resp:
+            with open(arq_salvar, 'wb') as f:
+                for chunk in resp.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+        print(f"###### DOWNLOAD CONCLUIDO {url_download}")
+        # Extrair esse arquivo
 
-    print(f"###### ARQUIVO DESCOMPACTADO")
+        print(f"###### DESCOMPACTANDO ARQUIVO {arq_salvar}")
+        with ZipFile(arq_salvar) as zf:
+            zf.extract(arq_csv, path='download')
 
-    _deleta_arquivo(path_arquivo=arq_salvar)
+        # Apaga o arquivo zip
+        _deleta_arquivo(path_arquivo=arq_salvar)
+        # continuar o fluxo 
+
+
+
+
 
 
 def _carrega_bd(conn, nome_schema, nome_tabela, lista_colunas_indices, path_arq_csv, encoding, delimitador):
@@ -172,20 +219,64 @@ def _carrega_bd(conn, nome_schema, nome_tabela, lista_colunas_indices, path_arq_
         conn.commit()
 
         print(f"###### CARREGANDO DADOS")
-        with open(path_arq_csv, 'r', encoding=encoding) as f:
-            cur.copy_expert(sql=copy_sql, file=f)
-        conn.commit()
 
-        print(f"###### RECRIANDO INDICES")
-        for coluna_indice in lista_colunas_indices:
-            cur.execute(f'CREATE INDEX {nome_tabela}_{coluna_indice}_idx ON {nome_schema}.{nome_tabela} ({coluna_indice});')
-            conn.commit()
+# dsd
         
-        print(f"###### CARGA DA TABELA CONCLUIDA")
+        try: 
+            with open(path_arq_csv, 'r', encoding=encoding) as f:
+                cur.copy_expert(sql=copy_sql, file=f)
+            conn.commit()
+
+            print(f"###### RECRIANDO INDICES")
+            for coluna_indice in lista_colunas_indices:
+                cur.execute(f'CREATE INDEX {nome_tabela}_{coluna_indice}_idx ON {nome_schema}.{nome_tabela} ({coluna_indice});')
+                conn.commit()
+            print(f"###### CARGA DA TABELA CONCLUIDA")
+
+            # Apaga o arquivo após a carga no banco de dados
+            _deleta_arquivo(path_arquivo=path_arq_csv)
+
+        except Exception as erro:
+            print("erro no nome do arquivo csv - realizando ajustes!")
+            # Modificar a data para o mês anterior
+            # path_arq_csv=f'download/{data_atualiza.strftime("%Y%m")}_{base_federal["sufixo_arquivo"]}.csv'
+            dt_arq_csv = _extrair_seis_numeros_para_carga_csv(path_arq_csv)
+            dt_arq_csv = _ajuste_mes_download_erro_para_mes_anterior(dt_arq_csv)
+            path_arq_csv = _substituir_seis_numeros(path_arq_csv, dt_arq_csv)
+
+            with open(path_arq_csv, 'r', encoding=encoding) as f:
+                cur.copy_expert(sql=copy_sql, file=f)
+            conn.commit()
+
+            print(f"###### RECRIANDO INDICES")
+            for coluna_indice in lista_colunas_indices:
+                cur.execute(f'CREATE INDEX {nome_tabela}_{coluna_indice}_idx ON {nome_schema}.{nome_tabela} ({coluna_indice});')
+                conn.commit()
+            print(f"###### CARGA DA TABELA CONCLUIDA")
+
+            # Apaga o arquivo após a carga no banco de dados
+            _deleta_arquivo(path_arquivo=path_arq_csv)
+
+
+
+
+
+        # with open(path_arq_csv, 'r', encoding=encoding) as f:
+        #     cur.copy_expert(sql=copy_sql, file=f)
+        # conn.commit()
+
+        # print(f"###### RECRIANDO INDICES")
+        # for coluna_indice in lista_colunas_indices:
+        #     cur.execute(f'CREATE INDEX {nome_tabela}_{coluna_indice}_idx ON {nome_schema}.{nome_tabela} ({coluna_indice});')
+        #     conn.commit()
+        
+        # print(f"###### CARGA DA TABELA CONCLUIDA")
+
 
 
 def _deleta_arquivo(path_arquivo):
     os.remove(path_arquivo)
+
 
 
 def etl_base_servidores():
@@ -210,6 +301,7 @@ def etl_base_servidores():
     
     conn.close()
     print("######## ETL BASE SERVIDORES FINALIZADO")
+
 
 
 def _gera_csv_teste(conn, path_arq_csv):
@@ -243,3 +335,38 @@ def _gera_csv_teste(conn, path_arq_csv):
         writer.writerow(['nome', 'cpf', 'pis_pasep', 'vinculos', 'remuneracao_bruta'])
 
         [writer.writerow(['DADOS FICTICIOS APENAS PARA FINS DE SIMULAÇÃO', '99999999999', row[0], 'VINCULO TESTE', '999.999.999,99']) for row in lista_nis]
+
+
+
+def _ajuste_mes_download_erro_para_mes_anterior(ano_mes_str):
+    # Converte "202502" para um objeto datetime
+    data = datetime.datetime.strptime(ano_mes_str, "%Y%m")
+    
+    # Subtrai um mês
+    if data.month == 1:
+        novo_ano = data.year - 1
+        novo_mes = 12
+    else:
+        novo_ano = data.year
+        novo_mes = data.month - 1
+    # Retorna no mesmo formato "YYYYMM"
+    return f"{novo_ano}{novo_mes:02d}"
+
+
+
+
+def _extrair_seis_numeros_para_carga_csv(texto):
+    """
+    Extrai os seis números que estão entre "/" e "_" em uma string.
+    Retorna o número encontrado como string, ou None se não encontrar.
+    """
+    resultado = re.search(r"/(\d{6})_", texto)
+    return resultado.group(1)
+
+
+def _substituir_seis_numeros(texto, novo_valor):
+    """
+    Substitui os seis números que estão entre "/" e "_" em uma string pelo novo_valor.
+    novo_valor deve ser uma string de 6 dígitos.
+    """
+    return re.sub(r"/(\d{6})_", f"/{novo_valor}_", texto)

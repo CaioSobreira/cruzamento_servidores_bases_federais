@@ -37,7 +37,7 @@ class BasesResumo:
         , seguro_defeso AS (
             SELECT
                 3 AS ordem,
-                MAX(substr(mes_referencia, 1, 4) || '-' || substr(mes_referencia, 5, 2) || '-01')::DATE AS mes_referencia,
+                MAX(substr(mes_referencia, 1, 4) || '-' || substr(mes_referencia, 5, 2) || '-01')::DATE AS data_competencia,
                 'Seguro Defeso' AS base_dados
             FROM benef_federais.seguro_defeso
         )
@@ -48,11 +48,29 @@ class BasesResumo:
             UNION
             SELECT * FROM seguro_defeso
         )
-        SELECT * FROM uniao ORDER BY ordem;
+        SELECT
+            ordem,  
+            substr(data_competencia::TEXT, 6,2) || '-' || substr(data_competencia::TEXT, 1,4) AS data_competencia,
+            UPPER(base_dados) as base_dados
+        FROM uniao ORDER BY ordem;
         '''
 
         df = pd.read_sql(query, self.db_engine)
-        # return df.to_json(orient='records')
+       
+        
+        # # Alretar para datetime
+        # df['data_competencia'] = pd.to_datetime( df['data_competencia'], errors='coerce')    
+        
+        print(df.dtypes)
+
+        # Altera o para MM-YYYY
+        # for index, row in df.iterrows():
+        #     df.at[index, 'data_competencia'] = row['data_competencia'].strftime('%m-%Y')
+
+        # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%mm-%YYYY')
+
+        print( df )
+
         return df.to_dict(orient='records')
 
 

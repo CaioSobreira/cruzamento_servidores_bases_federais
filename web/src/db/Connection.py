@@ -7,8 +7,8 @@ class Connection:
     def __init__(self):
         load_dotenv()
 
-        # self.DB_HOST = os.getenv('DB_HOST')
-        self.DB_HOST = 'localhost'
+        self.DB_HOST = os.getenv('DB_HOST')
+        # self.DB_HOST = 'localhost'
         self.DB_PORT = os.getenv('DB_PORT')
         self.DB_USER = os.getenv('DB_USER')
         self.DB_PASS = os.getenv('DB_PASSWORD')

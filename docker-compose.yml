@@ -1,29 +1,32 @@
 services:
 
-  web_csbf:
-    build:
-      context: .
-      dockerfile: web/Dockerfile
-    ports:
-      - "80:5000"
-    depends_on:
-      db_csbf:
-        condition: service_healthy
-    volumes:
-      - ./web:/app
-    working_dir: /app
-    environment:
-      FLASK_APP: main.py
-      FLASK_ENV: development
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-    command: flask run --host=0.0.0.0
+  # web_csbf:
+  #   build:
+  #     context: .
+  #     dockerfile: web/Dockerfile
+  #   ports:
+  #     - "80:5000"
+  #   depends_on:
+  #     db_csbf:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./web:/app
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   working_dir: /app
+  #   environment:
+  #     FLASK_APP: main.py
+  #     FLASK_ENV: development
+  #     DB_HOST: ${DB_HOST}
+  #     DB_PORT: ${DB_PORT}
+  #     DB_NAME: ${DB_NAME}
+  #     DB_USER: ${DB_USER}
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #   command: flask run --host=0.0.0.0
+
 
 
   app_csbf :
+    user: root
     build:
       context: .
       dockerfile: app/Dockerfile

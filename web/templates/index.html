@@ -24,6 +24,7 @@
     <div class="container py-4">
         <h1>Cruzamento de Servidores Públicos Vs. Bases de Benefícios federais</h1>
         <p class="lead">Bem-vindo ao Sistema</p>
+
         
 
         <div class="container mt-5">
@@ -36,32 +37,16 @@
                     <th>Nome da Carga</th>
                   </tr>
                 </thead>
-                <tbody>
-                    {% for row in dados %}
-                    <tr>
-                        <td>{{ row.data_competencia }}</td>
-                        <td>{{ row.base_dados }}</td>
-                    </tr>
-                    {% endfor %}
+                <tbody id="tabela-cargas">
                 </tbody>
               </table>
             </div>
           </div>
-        
-        
-        
 
 
         <h2 class="mt-5">Ações:</h2>
 
-
-
-
-
-
         <div class="row g-3">
-            
-            
             
             <a class="col-md-4" href="{{ url_for('page_servidores') }}" class="text-decoration-none text-white">
                 <div>
@@ -75,8 +60,8 @@
               
             <a class="col-md-4" href="/pagina-inicial" class="text-decoration-none text-white">
                 <div>
-                    <div class="card bg-primary card-custom p-3">
-                        <h5>Carga de Dados federais</h5>
+                    <div class="card bg-purple card-custom p-3">
+                        <h5>Carga/Atualização de Dados federais</h5>
                         <p>Gerencias a atualização das Bases de benefícios Federais.</p>                            
                     </div>
                 </div>
@@ -155,6 +140,49 @@
         </ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+
+    function carregarTabelaCargas() {
+        fetch('/api/cargas')
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Erro ao buscar os dados');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.getElementById('tabela-cargas');
+            tbody.innerHTML = ''; // Limpa antes de preencher
+
+            data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.data_competencia}</td>
+                <td>${row.base_dados}</td>
+            `;
+            tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar os dados da tabela:', error);
+        });
+    }
+
+
+    // Chama a função automaticamente ao carregar a página
+    window.addEventListener('DOMContentLoaded', carregarTabelaCargas);
+
+
+
+
+</script>
+
+
+
+
 </body>
 </html>
 

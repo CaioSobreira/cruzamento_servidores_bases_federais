@@ -1,13 +1,18 @@
-from flask import Flask, render_template, request, url_for, redirect, send_from_directory
+from flask import Flask, render_template, request, url_for, redirect, send_from_directory, jsonify
 import os
 from src.data.bases import BasesResumo
 import pandas as pd
+import docker
+
+
+client_docker = docker.DockerClient(base_url="unix://var/run/docker.sock")
+
 
 #################################################################
 #                       FALTA FAZER
 #################################################################
 
-# Página de sucesso de atualização de Servidores
+# [OK] Página de sucesso de atualização de Servidores 
 # Rodar o Conteiner de Atualização da Bases de Benefícios Sociais e Cruzamento das Bases com servidores
 # Criar um dashboard Básico
 
@@ -85,10 +90,41 @@ def upload_servidores():
         database = BasesResumo()
         database.insert_servidores(dataframe=df)
 
-        return f"Arquivo {file.filename} enviado e processado com sucesso!"
+        mensagem = f"Arquivo {file.filename} enviado e processado com sucesso!"
+        # _pagina_resultado_processo(is_sucesso=True, mensagem=mensagem)
+        return render_template('resultado_processo.html', mensagem=mensagem, status=True)
+        # return f"Arquivo {file.filename} enviado e processado com sucesso!"
     else:
-        return "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
+        mensagem = "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
+        # _pagina_resultado_processo(is_sucesso=False, mensagem=mensagem)
+        return render_template('resultado_processo.html', mensagem=mensagem, status=False)
+        # return "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
 
+
+
+
+@app.route('/api/cargas')
+def api_cargas():
+    bases_conn = BasesResumo() 
+    dados = bases_conn.data_atualizacao_bases()
+
+    # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%m-%Y')
+
+    return jsonify(dados)
+
+
+
+
+@app.route('/api/docker')
+def api_docker():
+    client_docker.containers.run()
+
+    bases_conn = BasesResumo() 
+    dados = bases_conn.data_atualizacao_bases()
+
+    # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%m-%Y')
+
+    return jsonify(dados)
 
 
 
@@ -122,7 +158,16 @@ def _apagar_uploads_antigos():
 
 
 
+def _pagina_resultado_processo(is_sucesso:bool, mensagem:str):
+    if is_sucesso:
+        return render_template('resultado_processo.html', mensagem=mensagem, status=True)        
+    else:
+        return render_template('resultado_processo.html', mensagem=mensagem, status=False)
+        
+
+
+
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    app.run( debug=True)
+    app.run(debug=True)
