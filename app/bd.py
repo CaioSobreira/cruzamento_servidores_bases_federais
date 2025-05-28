@@ -3,11 +3,12 @@ from decouple import config
 import sqlalchemy
 import psycopg2
 
-db_host=config('DB_HOST')
-db_port=config('DB_PORT')
-db_user=config('DB_USER')
-db_password=config('DB_PASSWORD')
-db_name=config('DB_NAME')
+db_host=config('POSTGRES_HOST')
+db_port=config('POSTGRES_PORT')
+db_user=config('POSTGRES_USER')
+db_password=config('POSTGRES_PASSWORD')
+db_name=config('POSTGRES_DB')
+
 
 #A CONEXÃO DIRETA VIA PSYCOPG2 SERÁ UTILIZADA PARA CARREGAR OS CSVS BRUTOS VIA COMANDO "COPY" DO POSTGRES
 def get_conn_psycopg2():

@@ -155,3 +155,43 @@ def executa_cruzamentos():
         df_seguro_defeso.to_excel(writer, sheet_name="Seguro Defeso", index=False)
 
     print("######## CRUZAMENTO DE DADOS FINALIZADO")
+
+
+
+
+def cruzamentos_bolsa_familia():
+    print("######## CRUZAMENTO DE DADOS INICIADO")
+    engine = get_engine_sqlalchemy()
+
+    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BOLSA FAMILIA")
+    df_bolsa_familia = _cruzamento_bolsa_familia(engine=engine)
+
+    print("######## CRUZAMENTO DE DADOS FINALIZADO")
+
+    return df_bolsa_familia
+
+
+
+def cruzamentos_bpc():
+    print("######## CRUZAMENTO DE DADOS INICIADO")
+    engine = get_engine_sqlalchemy()
+
+    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BPC")
+    df_bpc = _cruzamento_bpc(engine=engine)
+
+    print("######## CRUZAMENTO DE DADOS FINALIZADO")
+
+    return df_bpc
+
+
+
+def cruzamentos_seguro_defeso():
+    print("######## CRUZAMENTO DE DADOS INICIADO")
+    engine = get_engine_sqlalchemy()
+
+    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X SEGURO DEFESO")
+    df_seguro_defeso = _cruzamento_seguro_defeso(engine=engine)
+
+    print("######## CRUZAMENTO DE DADOS FINALIZADO")
+
+    return df_seguro_defeso

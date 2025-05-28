@@ -46,98 +46,71 @@
 
         <h2 class="mt-5">Ações:</h2>
 
-        <div class="row g-3">
+
+        <div class="container py-4">
+            <h1>Atualização da Base de Servidores</h1>
             
-            <a class="col-md-4" href="{{ url_for('page_servidores') }}" class="text-decoration-none text-white">
-                <div>
-                    <div class="card bg-primary card-custom p-3">
-                        <h5>Carga/Atualização Servidores</h5>
-                        <p>Gerencias a atualização das Bases dos Servidores.</p>                            
-                    </div>
-                </div>
-            </a>
-
-              
-            <a class="col-md-4" href="/pagina-inicial" class="text-decoration-none text-white">
-                <div>
-                    <div class="card bg-purple card-custom p-3">
-                        <h5>Carga/Atualização de Dados federais</h5>
-                        <p>Gerencias a atualização das Bases de benefícios Federais.</p>                            
-                    </div>
-                </div>
-            </a>
-
-              
-            <a  class="col-md-4" href="/pagina-inicial" class="text-decoration-none text-white">
-                <div>
-                    <div class="card bg-primary card-custom p-3">
-                        <h5>Carga de Dados federais</h5>
-                        <p>Gerencias a atualização das Bases de benefícios Federais.</p>                            
-                    </div>
-                </div>
-            </a>
-
-
-
-            <div class="col-md-4">
-                <div class="card bg-danger card-custom p-3">
-                    <h5>Carga dos Servidores</h5>
-                    <p>Gerencia a atualização e carga dos Servidores Públicos.</p>
-                    <a href="#">Ir Para</a>
-                </div>
-            </div>
+            <div class="container">
+                <div class="card shadow rounded-4">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4">Upload de Arquivo</h3>
             
-            <div class="col-md-4">
-                <div class="card bg-purple card-custom p-3" style="background-color:#6f42c1;">
-                    <h5>Cruzamento de Dados</h5>
-                    <p>Após realizar a carga das bases, pode-se realizar os cruzamentos aqui.</p>
-                    <a href="#">Ir Para</a>
+                        <form method="POST" action="{{ url_for('upload_servidores') }}" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="arquivo" class="form-label">Selecione um arquivo (.csv, .xls, .xlsx)</label>
+                                <input class="form-control" type="file" name="arquivo" id="arquivo" accept=".csv, .xls, .xlsx" required>
+                            </div>
+            
+                            <button type="submit" class="btn btn-primary">Enviar Arquivo</button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card bg-secondary card-custom p-3" style="background-color:#8e44ad;">
-                    <h5>Calendário</h5>
-                    <p>Voltado para profissional que realizam apontamento de horas diariamente.</p>
-                    <a href="#">Definir Página Inicial</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-success card-custom p-3">
-                    <h5>Disponibilidade</h5>
-                    <p>Página que apresenta todas as locações de recursos.</p>
-                    <a href="#">Definir Página Inicial</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-info card-custom p-3 text-dark">
-                    <h5>Dashboards</h5>
-                    <p>Página customizada com indicadores de sua escolha.</p>
-                    <a href="#">Definir Página Inicial</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-light card-custom p-3 text-dark">
-                    <h5>Atender Receptivo</h5>
-                    <p>Página com comunicação direta ao discador para volume alto de atendimento telefônico.</p>
-                    <a href="#">Definir Página Inicial</a>
+            <div class="container mt-4">
+                <div class="alert alert-info rounded-4 shadow-sm">
+                    <strong>Precisa de um modelo?</strong>
+                    <br>
+                    <a class="btn btn-outline-success mt-2" href="{{ url_for('download', filename='servidores_cruzamento.xlsx') }}">
+                        Baixar modelo (.xlsx)
+                    </a>
+                    <a class="btn btn-outline-success mt-2" href="{{ url_for('download', filename='servidores_cruzamento.csv') }}">
+                        Baixar modelo (.csv)
+                    </a>
+                    <a class="btn btn-outline-success mt-2" href="{{ url_for('download', filename='servidores_cruzamento.xls') }}">
+                        Baixar modelo (.xls)
+                    </a>
                 </div>
             </div>
         </div>
 
 
-        
 
 
-        <h2 class="mt-5">Todas as páginas do sistema</h2>
-        <ul class="list-group">
-            <li class="list-group-item">CRM</li>
-            <li class="list-group-item">ServiceDesk</li>
-            <li class="list-group-item">Despesas</li>
-            <li class="list-group-item">Projetos</li>
-            <li class="list-group-item">Timesheet</li>
-            <li class="list-group-item">Workforce</li>
-        </ul>
+        <div class="container mt-5">
+            <h2 class="mb-4">Tabela de Resultados Encontrados</h2>
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover table-striped align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Data do Cruzamento</th>
+                    <th>Cruzamento</th>
+                    <th>Quantidade de Achados</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-cruzamentos">
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+        <div class="d-flex gap-3">
+            <a class="btn btn-primary mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Baixar Achados</a>
+            <!-- <button type="button" class="btn btn-primary">Baixar Achados</button> -->
+            
+            <button type="button" class="btn btn-success">Realizar Novo Cruzamento</button>
+        </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -172,15 +145,42 @@
     }
 
 
+
+    function carregarTabelacruzamentos() {
+        fetch('/api/resultadoscruzamentos')
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Erro ao buscar os dados');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.getElementById('tabela-cruzamentos');
+            tbody.innerHTML = ''; // Limpa antes de preencher
+
+            data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.data_cruzamento}</td>
+                <td>${row.base}</td>
+                <td>${row.qtd}</td>
+            `;
+            tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar os dados da tabela:', error);
+        });
+    }
+
+
+
     // Chama a função automaticamente ao carregar a página
     window.addEventListener('DOMContentLoaded', carregarTabelaCargas);
-
-
+    window.addEventListener('DOMContentLoaded', carregarTabelacruzamentos);
 
 
 </script>
-
-
 
 
 </body>

@@ -5,7 +5,7 @@ import pandas as pd
 import docker
 
 
-client_docker = docker.DockerClient(base_url="unix://var/run/docker.sock")
+# client_docker = docker.DockerClient(base_url="unix://var/run/docker.sock")
 
 
 #################################################################
@@ -25,6 +25,7 @@ client_docker = docker.DockerClient(base_url="unix://var/run/docker.sock")
 UPLOAD_FOLDER =  'uploads'
 ALLOWED_EXTENSIONS = {'csv', 'xls', 'xlsx'}
 MODELOS_PATH = 'modelos'
+RESULTADOS_PATH = 'resultados'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -46,6 +47,14 @@ def index():
 @app.route('/download/<filename>')
 def download(filename):
     return send_from_directory(MODELOS_PATH, filename, as_attachment=True)
+
+
+
+@app.route('/resultados/<filename>')
+def planilha_resultados(filename):
+    return send_from_directory( RESULTADOS_PATH, filename, as_attachment=True)
+
+
 
 
 
@@ -114,17 +123,26 @@ def api_cargas():
 
 
 
-
-@app.route('/api/docker')
-def api_docker():
-    client_docker.containers.run()
-
+@app.route('/api/resultadoscruzamentos')
+def api_resultados():
     bases_conn = BasesResumo() 
-    dados = bases_conn.data_atualizacao_bases()
-
-    # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%m-%Y')
+    dados = bases_conn.base_resultados_resumo()
 
     return jsonify(dados)
+
+
+
+
+# @app.route('/api/docker')
+# def api_docker():
+#     client_docker.containers.run()
+
+#     bases_conn = BasesResumo() 
+#     dados = bases_conn.data_atualizacao_bases()
+
+#     # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%m-%Y')
+
+#     return jsonify(dados)
 
 
 

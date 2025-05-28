@@ -88,3 +88,28 @@ class BasesResumo:
 
             print("DADOS DOS SERVIDORES INSERIDOS")
 
+
+    def base_resultados_resumo(self):
+        query = '''
+                SELECT 
+                    to_char(MAX(data_insert), 'DD/MM/YYYY HH24:MI:SS') as data_cruzamento, 
+                    'Novo Bolsa Família' as base, 
+                    COUNT(*) AS qtd
+                FROM resultados.seguro_defeso
+                UNION
+                SELECT 
+                    to_char(MAX(data_insert), 'DD/MM/YYYY HH24:MI:SS') as data_cruzamento, 
+                    'Seguro Defeso' AS base, 
+                    COUNT(*) AS qtd 
+                FROM resultados.seguro_defeso
+                UNION
+                SELECT 
+                    to_char(MAX(data_insert), 'DD/MM/YYYY HH24:MI:SS') as data_cruzamento, 
+                    'BPC' AS base, 
+                    COUNT(*) AS qtd
+                FROM resultados.bpc;
+        '''
+        
+        df = pd.read_sql(query, self.db_engine)
+
+        return df.to_dict(orient='records')

@@ -1,4 +1,73 @@
 CREATE SCHEMA benef_federais;
+CREATE SCHEMA resultados;
+
+
+CREATE TABLE resultados.seguro_defeso (
+    nome TEXT,
+    cpf TEXT,
+    pis_pasep TEXT,
+    vinculos TEXT,
+    remuneracao_bruta TEXT,
+    mes_referencia TEXT,
+    uf CHAR(2),
+    codigo_municipio_siafi TEXT,
+    nome_municipio TEXT,
+    cpf_favorecido TEXT,
+    nis_favorecido TEXT,
+    rgp_favorecido TEXT,
+    nome_favorecido TEXT,
+    valor_parcela TEXT,
+    data_insert TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+CREATE TABLE resultados.bpc (
+    nome TEXT,
+    cpf TEXT,
+    pis_pasep TEXT,
+    vinculos TEXT,
+    remuneracao_bruta TEXT,
+    mes_competencia TEXT,
+    mes_referencia TEXT,
+    uf TEXT,
+    codigo_municipio_siafi TEXT,
+    nome_municipio TEXT,
+    nis_beneficiario TEXT,
+    cpf_beneficiario TEXT,
+    nome_beneficiario TEXT,
+    nis_representante_legal TEXT,
+    cpf_representante_legal TEXT,
+    nome_representante_legal TEXT,
+    numero_beneficio TEXT,
+    beneficio_concedido_judicialmente TEXT,
+    valor_parcela TEXT,
+    data_insert TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+CREATE TABLE resultados.novo_bolsa_familia (
+    nome TEXT,
+    cpf TEXT,
+    pis_pasep TEXT,
+    vinculos TEXT,
+    remuneracao_bruta TEXT,
+    mes_competencia TEXT,
+    mes_referencia TEXT,
+    uf TEXT,
+    codigo_municipio_siafi TEXT,
+    nome_municipio TEXT,
+    cpf_favorecido TEXT,
+    nis_favorecido TEXT,
+    nome_favorecido TEXT,
+    valor_parcela TEXT,
+    data_insert TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 
 CREATE TABLE benef_federais.bpc (
 	mes_competencia varchar(6) NULL,

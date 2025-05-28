@@ -1,28 +1,28 @@
 services:
 
-  # web_csbf:
-  #   build:
-  #     context: .
-  #     dockerfile: web/Dockerfile
-  #   ports:
-  #     - "80:5000"
-  #   depends_on:
-  #     db_csbf:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./web:/app
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   working_dir: /app
-  #   environment:
-  #     FLASK_APP: main.py
-  #     FLASK_ENV: development
-  #     DB_HOST: ${DB_HOST}
-  #     DB_PORT: ${DB_PORT}
-  #     DB_NAME: ${DB_NAME}
-  #     DB_USER: ${DB_USER}
-  #     DB_PASSWORD: ${DB_PASSWORD}
-  #   command: flask run --host=0.0.0.0
-
+  web_csbf:
+    user: root
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    network_mode: host
+    depends_on:
+      db_csbf:
+        condition: service_healthy
+    volumes:
+      - ./web:/app
+      - ./app/resultados:/app/resultados
+      # - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /app
+    environment:
+      FLASK_APP: main.py
+      FLASK_ENV: development
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: ['flask', 'run', '--host=0.0.0.0']
 
 
   app_csbf :
@@ -30,17 +30,25 @@ services:
     build:
       context: .
       dockerfile: app/Dockerfile
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./app/servidores:/app/servidores
       - ./app/resultados:/app/resultados
     depends_on:
       db_csbf:
         condition: service_healthy
-    networks:
-      - network_csbf
+    network_mode: host
+
 
   db_csbf:
     build: ./database/
+    env_file:
+      - ./.env
     ports:
       - "5432:5432"
     command: >
@@ -54,10 +62,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - network_csbf
+    network_mode: host
 
 
-networks:
-  network_csbf:
 
+# POSTGRES_HOST=localhost
+# POSTGRES_PORT=5432
+# POSTGRES_USER=postgres
+# POSTGRES_PASSWORD=postgres_pwd
+# POSTGRES_DB=bd_benef_federais

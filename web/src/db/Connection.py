@@ -7,12 +7,12 @@ class Connection:
     def __init__(self):
         load_dotenv()
 
-        self.DB_HOST = os.getenv('DB_HOST')
+        self.DB_HOST = os.getenv('POSTGRES_HOST')
         # self.DB_HOST = 'localhost'
-        self.DB_PORT = os.getenv('DB_PORT')
-        self.DB_USER = os.getenv('DB_USER')
-        self.DB_PASS = os.getenv('DB_PASSWORD')
-        self.DB_NAME = os.getenv('DB_NAME')
+        self.DB_PORT = os.getenv('POSTGRES_PORT')
+        self.DB_USER = os.getenv('POSTGRES_USER')
+        self.DB_PASS = os.getenv('POSTGRES_PASSWORD')
+        self.DB_NAME = os.getenv('POSTGRES_DB')
 
         txt = f'''
         {self.DB_HOST}
@@ -22,7 +22,6 @@ class Connection:
         {self.DB_NAME}
         '''
         print(txt)
-
 
     def create_conexao_bd(self):
         '''Cria a conexão para galito no projeto'''
