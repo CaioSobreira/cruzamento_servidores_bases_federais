@@ -43,6 +43,8 @@ services:
       db_csbf:
         condition: service_healthy
     network_mode: host
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8081
+
 
 
   db_csbf:

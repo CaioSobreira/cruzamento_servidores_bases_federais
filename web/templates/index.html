@@ -107,8 +107,8 @@
         <div class="d-flex gap-3">
             <a class="btn btn-primary mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Baixar Achados</a>
             <!-- <button type="button" class="btn btn-primary">Baixar Achados</button> -->
-            
-            <button type="button" class="btn btn-success">Realizar Novo Cruzamento</button>
+            <!-- <a class="btn btn-success mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Realizar Novo Cruzamento</a> -->
+            <button type="button" onclick="chamarCruzamento();" class="btn btn-success">Realizar Novo Cruzamento</button>
         </div>
 
     </div>
@@ -173,7 +173,22 @@
         });
     }
 
-
+    function chamarCruzamento() {
+            fetch('/realizar_cruzamentos', { method: 'GET', headers: {'Content-Type': 'application/json'} })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Erro na requisição");
+                    }
+                    console.log(res.json())
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(err => {
+                    document.getElementById("resultado").textContent = "Erro: " + err.message;
+                });
+        }
 
     // Chama a função automaticamente ao carregar a página
     window.addEventListener('DOMContentLoaded', carregarTabelaCargas);

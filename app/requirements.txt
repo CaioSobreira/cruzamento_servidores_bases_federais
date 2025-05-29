@@ -19,3 +19,5 @@ SQLAlchemy==2.0.30
 typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
+fastapi==0.115.12
+uvicorn==0.34.2

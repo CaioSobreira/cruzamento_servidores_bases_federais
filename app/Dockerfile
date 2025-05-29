@@ -6,4 +6,4 @@ COPY .env .
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "-u", "main.py"]
+# CMD ["python", "-u", "main.py"]

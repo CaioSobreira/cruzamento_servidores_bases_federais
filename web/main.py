@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, send_from_directory, jsonify
+import requests
 import os
 from src.data.bases import BasesResumo
 import pandas as pd
@@ -130,6 +131,28 @@ def api_resultados():
 
     return jsonify(dados)
 
+
+# ================================================================================================
+#                              SOLICITA A REALIZAÇÃO DOS CRUZAMENTOS
+# ================================================================================================
+@app.route('/realizar_cruzamentos', methods=['GET'])
+def realizar_cruzamentos():
+     # Dados que serão enviados no POST
+    payload = {
+        "mensagem": "Chamado via GET em /acionar"
+    }
+
+    try:
+        resposta = requests.post("http://localhost:8081/", json=payload)
+        return jsonify({
+            "status_post": resposta.status_code,
+            "resposta_post": resposta.json()
+        }), resposta.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            "erro": "Erro ao enviar POST para localhost:8081",
+            "detalhes": str(e)
+        }), 500
 
 
 
