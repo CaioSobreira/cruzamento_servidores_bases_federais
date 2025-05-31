@@ -3,15 +3,14 @@ import requests
 import os
 from src.data.bases import BasesResumo
 import pandas as pd
-import docker
 
 
 # client_docker = docker.DockerClient(base_url="unix://var/run/docker.sock")
 
 
-#################################################################
+# ================================================================================================
 #                       FALTA FAZER
-#################################################################
+# ================================================================================================
 
 # [OK] Página de sucesso de atualização de Servidores 
 # Rodar o Conteiner de Atualização da Bases de Benefícios Sociais e Cruzamento das Bases com servidores
@@ -19,9 +18,9 @@ import docker
 
 
 
-#################################################################
+# ================================================================================================
 #                       CONFIG FLASK
-#################################################################
+# ================================================================================================
 
 UPLOAD_FOLDER =  'uploads'
 ALLOWED_EXTENSIONS = {'csv', 'xls', 'xlsx'}
@@ -32,10 +31,11 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-#################################################################
+# ================================================================================================
 #                            ROTAS
-#################################################################
+# ================================================================================================
 
+# ROTA PÁGINA INICIAL
 @app.route("/")
 def index():
     bases_conn = BasesResumo() 
@@ -45,9 +45,11 @@ def index():
 
 
 
+# ROTA DE BAIXAR TEMPLETE DE CARGA SERVIDORES
 @app.route('/download/<filename>')
 def download(filename):
     return send_from_directory(MODELOS_PATH, filename, as_attachment=True)
+
 
 
 
@@ -56,16 +58,14 @@ def planilha_resultados(filename):
     return send_from_directory( RESULTADOS_PATH, filename, as_attachment=True)
 
 
-
-
-
+# PÁGINA DE RESPOSTA DA CARGA DE SERVIDORES
 @app.route('/page_servidores')
 def page_servidores():
     return render_template('page_servidores.html')
 
 
 
-
+# ROTA PARA UPLOAD DO ARQUIVO DE SERVIDORES
 @app.route('/upload_servidores', methods=['POST'])
 def upload_servidores():
     if 'arquivo' not in request.files:
@@ -112,18 +112,21 @@ def upload_servidores():
 
 
 
-
+# ================================================================================================
+# JSON COM AS COMPETÊNCIAS DAS CARGAS 
+# ================================================================================================
 @app.route('/api/cargas')
 def api_cargas():
     bases_conn = BasesResumo() 
     dados = bases_conn.data_atualizacao_bases()
 
-    # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%m-%Y')
-
     return jsonify(dados)
 
 
 
+# ================================================================================================
+# JSON COM AS COMPETÊNCIAS DAS CARGAS 
+# ================================================================================================
 @app.route('/api/resultadoscruzamentos')
 def api_resultados():
     bases_conn = BasesResumo() 
@@ -133,8 +136,49 @@ def api_resultados():
 
 
 # ================================================================================================
-#                              SOLICITA A REALIZAÇÃO DOS CRUZAMENTOS
+#                   ROTAS DE MANUTENÇÃO DAS CARGAS E EXECUÇÃO DE TAREFAS
 # ================================================================================================
+
+# ================================================================================================
+# ATUALIZAR CARGA DE DADOS FEDERAIS
+# ================================================================================================
+@app.route('/update', methods=['GET'])
+def update_carga():
+    try:
+        resposta = requests.get("http://localhost:8081/update")
+        return jsonify({
+            "status_post": resposta.status_code,
+            "resposta_post": resposta.json()
+        }), resposta.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            "erro": "Erro ao enviar para localhost:8081",
+            "detalhes": str(e)
+        }), 500
+
+
+# ================================================================================================
+# REALIZAR CRUZAMENTO COM A BASE DE SERVIDORES
+# ================================================================================================
+@app.route('/cruzamento', methods=['GET'])
+def cruzamento_carga():
+    try:
+        resposta = requests.get("http://localhost:8081/cruzamento")
+        return jsonify({
+            "status_post": resposta.status_code,
+            "resposta_post": resposta.json()
+        }), resposta.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            "erro": "Erro ao enviar para localhost:8081",
+            "detalhes": str(e)
+        }), 500
+
+
+
+
+
+
 @app.route('/realizar_cruzamentos', methods=['GET'])
 def realizar_cruzamentos():
      # Dados que serão enviados no POST

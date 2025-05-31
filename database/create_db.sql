@@ -117,6 +117,7 @@ CREATE TABLE servidores.servidores_cruzamento (
 	cpf varchar(11) NULL,
 	pis_pasep varchar(11) NULL,
 	vinculos varchar NULL,
-	remuneracao_bruta varchar NULL
+	remuneracao_bruta varchar NULL,
+    data_insert TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

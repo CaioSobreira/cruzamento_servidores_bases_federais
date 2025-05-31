@@ -8,6 +8,12 @@ from bd import get_conn_psycopg2
 from decouple import config
 import csv
 import re
+from dotenv import load_dotenv
+from app_log.AppLog import AppLog
+
+log = AppLog(name="etl.py").get_logger()
+load_dotenv()
+
 
 _url_origem_dados = 'https://portaldatransparencia.gov.br/origem-dos-dados'
 
@@ -52,6 +58,18 @@ _bases_federais = {
 
 
 
+def atualizar_bases_federais():
+    try:
+        etl_bases_federais()
+        log.info("atualizar_bases_federais() com sucesso")
+        return True
+    except Exception as e: 
+        log.error(f"atualizar_bases_federais() - {e}")
+        return False
+    
+
+
+
 def etl_bases_federais():
     print("######## ETL BASES FEDERAIS INICIADO")
     conn = get_conn_psycopg2()
@@ -70,15 +88,19 @@ def etl_bases_federais():
         tabela_atualizada = _verifica_tabela_atualizada(conn=conn, data_atualiza=data_atualiza, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], nome_coluna=base_federal['nome_coluna_data_atualiza'])
 
         if(tabela_atualizada is False):
+            log.info(f'etl_bases_federais() - baixando arquivos CSVs {base_federal["sufixo_arquivo"]}.csv')
             _download_csv(url=base_federal['url'], data_atualiza=data_atualiza, sufixo_arquivo=base_federal['sufixo_arquivo'])
+
             path_arq_csv=f'download/{data_atualiza.strftime("%Y%m")}_{base_federal["sufixo_arquivo"]}.csv'
-           
+
+            log.info(f'etl_bases_federais() - carregando no DB - {base_federal["sufixo_arquivo"]}.csv')           
             _carrega_bd(conn=conn, nome_schema=nome_schema, nome_tabela=base_federal['nome_tabela'], lista_colunas_indices=base_federal['lista_colunas_indices'], path_arq_csv=path_arq_csv, encoding='ISO 8859-1', delimitador=';')
            
             # _deleta_arquivo(path_arquivo=path_arq_csv)
 
     conn.close()
     print(f"######## ETL BASES FEDERAIS FINALIZADO")
+
 
 
 def _get_data_atualiza_bases(url_origem_dados, strings_busca_xpath_bases):
@@ -99,6 +121,7 @@ def _get_data_atualiza_bases(url_origem_dados, strings_busca_xpath_bases):
         data_atualiza_bases[base] = datetime.datetime.strptime(data_atualiza_str, '%m/%Y').date()
     
     return data_atualiza_bases
+
 
 
 def _verifica_tabela_atualizada(conn, data_atualiza, nome_schema, nome_tabela, nome_coluna):
@@ -219,8 +242,6 @@ def _carrega_bd(conn, nome_schema, nome_tabela, lista_colunas_indices, path_arq_
         conn.commit()
 
         print(f"###### CARREGANDO DADOS")
-
-# dsd
         
         try: 
             with open(path_arq_csv, 'r', encoding=encoding) as f:
@@ -286,7 +307,9 @@ def etl_base_servidores():
     print("###### BASE ---------- SERVIDORES CSV ----------")
     conn = get_conn_psycopg2()
 
-    modo_teste = config('MODO_TESTE', cast=bool)
+
+    modo_teste = bool(os.getenv('MODO_TESTE'))
+    # modo_teste = config('MODO_TESTE', cast=bool)
 
     path_arq_csv=f'servidores/servidores_cruzamento.csv'
 

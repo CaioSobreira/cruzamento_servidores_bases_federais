@@ -1,5 +1,9 @@
 import pandas as pd
 from bd import get_engine_sqlalchemy
+from app_log.AppLog import AppLog
+
+log = AppLog(name="cruzamento.py").get_logger()
+
 
 def _cruzamento_bolsa_familia(engine):
     query = """
@@ -41,6 +45,8 @@ def _cruzamento_bolsa_familia(engine):
     """
 
     return pd.read_sql(query, engine)
+
+
 
 def _cruzamento_bpc(engine):
     query = """
@@ -137,61 +143,67 @@ def _cruzamento_seguro_defeso(engine):
 
 
 def executa_cruzamentos():
-    print("######## CRUZAMENTO DE DADOS INICIADO")
-    engine = get_engine_sqlalchemy()
+    try:
+        log.info("# executa_cruzamentos - CRUZAMENTO DE DADOS INICIADO")
+        engine = get_engine_sqlalchemy()
 
-    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BOLSA FAMILIA")
-    df_bolsa_familia = _cruzamento_bolsa_familia(engine=engine)
-    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BPC")
-    df_bpc = _cruzamento_bpc(engine=engine)
-    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X SEGURO DEFESO")
-    df_seguro_defeso = _cruzamento_seguro_defeso(engine=engine)
-    
-    print("###### EXPORTANDO RESULTADOS - PLANILHA XLSX")
-    with pd.ExcelWriter("resultados/resultados_cruzamentos.xlsx") as writer:
+        log.info("#==> EXECUTANDO CRUZAMENTO - SERVIDORES X BOLSA FAMILIA")
+        df_bolsa_familia = _cruzamento_bolsa_familia(engine=engine)
 
-        df_bolsa_familia.to_excel(writer, sheet_name="Bolsa Familia", index=False)
-        df_bpc.to_excel(writer, sheet_name="BPC", index=False)
-        df_seguro_defeso.to_excel(writer, sheet_name="Seguro Defeso", index=False)
+        log.info("#==> EXECUTANDO CRUZAMENTO - SERVIDORES X BPC")
+        df_bpc = _cruzamento_bpc(engine=engine)
+        
+        log.info("#==> EXECUTANDO CRUZAMENTO - SERVIDORES X SEGURO DEFESO")
+        df_seguro_defeso = _cruzamento_seguro_defeso(engine=engine)
+        
+        log.info("#==> EXPORTANDO RESULTADOS - PLANILHA XLSX")
+        with pd.ExcelWriter("resultados/resultados_cruzamentos.xlsx") as writer:
 
-    print("######## CRUZAMENTO DE DADOS FINALIZADO")
-
+            df_bolsa_familia.to_excel(writer, sheet_name="Bolsa Familia", index=False)
+            df_bpc.to_excel(writer, sheet_name="BPC", index=False)
+            df_seguro_defeso.to_excel(writer, sheet_name="Seguro Defeso", index=False)
+        
+        log.info("#==> CRUZAMENTO DE DADOS FINALIZADO")
+        return True
+    except Exception as erro:
+        log.error(f"#==> executa_cruzamentos() - {erro}")
+        return False
 
 
 
 def cruzamentos_bolsa_familia():
-    print("######## CRUZAMENTO DE DADOS INICIADO")
+    # print("######## CRUZAMENTO DE DADOS INICIADO")
     engine = get_engine_sqlalchemy()
 
-    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BOLSA FAMILIA")
+    # print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BOLSA FAMILIA")
     df_bolsa_familia = _cruzamento_bolsa_familia(engine=engine)
 
-    print("######## CRUZAMENTO DE DADOS FINALIZADO")
+    # print("######## CRUZAMENTO DE DADOS FINALIZADO")
 
     return df_bolsa_familia
 
 
 
 def cruzamentos_bpc():
-    print("######## CRUZAMENTO DE DADOS INICIADO")
+    # print("######## CRUZAMENTO DE DADOS INICIADO")
     engine = get_engine_sqlalchemy()
 
-    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BPC")
+    # print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BPC")
     df_bpc = _cruzamento_bpc(engine=engine)
 
-    print("######## CRUZAMENTO DE DADOS FINALIZADO")
+    # print("######## CRUZAMENTO DE DADOS FINALIZADO")
 
     return df_bpc
 
 
 
 def cruzamentos_seguro_defeso():
-    print("######## CRUZAMENTO DE DADOS INICIADO")
+    # print("######## CRUZAMENTO DE DADOS INICIADO")
     engine = get_engine_sqlalchemy()
 
-    print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X SEGURO DEFESO")
+    # print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X SEGURO DEFESO")
     df_seguro_defeso = _cruzamento_seguro_defeso(engine=engine)
 
-    print("######## CRUZAMENTO DE DADOS FINALIZADO")
+    # print("######## CRUZAMENTO DE DADOS FINALIZADO")
 
     return df_seguro_defeso

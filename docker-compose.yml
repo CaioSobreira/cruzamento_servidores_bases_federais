@@ -25,8 +25,10 @@ services:
     command: ['flask', 'run', '--host=0.0.0.0']
 
 
+
   app_csbf :
     user: root
+    working_dir: /app
     build:
       context: .
       dockerfile: app/Dockerfile
@@ -36,15 +38,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MODO_TESTE: ${MODO_TESTE}
+      CONTAINER_INTEGRACAO: ${CONTAINER_INTEGRACAO}
     volumes:
-      - ./app/servidores:/app/servidores
-      - ./app/resultados:/app/resultados
+      - ./app:/app
     depends_on:
       db_csbf:
         condition: service_healthy
     network_mode: host
-    command: uvicorn main:app --reload --host 0.0.0.0 --port 8081
-
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8081"
+    # command: uvicorn main:app --reload --host 0.0.0.0 --port 8081
+    # sh -c "pip install --no-cache-dir -r requirements.txt && python main.py"
 
 
   db_csbf:
@@ -66,10 +71,3 @@ services:
       retries: 5
     network_mode: host
 
-
-
-# POSTGRES_HOST=localhost
-# POSTGRES_PORT=5432
-# POSTGRES_USER=postgres
-# POSTGRES_PASSWORD=postgres_pwd
-# POSTGRES_DB=bd_benef_federais

@@ -17,61 +17,58 @@ class BasesResumo:
         self.db_engine = self.conn.create_conexao_bd() 
 
 
+
     def data_atualizacao_bases(self):
         query = '''
-        WITH
-        novo_bolsa_familia AS (
-            SELECT
-                1 AS ordem,
-                MAX(substr(mes_competencia, 1, 4) || '-' || substr(mes_competencia, 5, 2) || '-01')::DATE AS data_competencia
-                , 'Novo Bolsa Família' AS base_dados
-            FROM benef_federais.novo_bolsa_familia
-        )
-        , bpc AS (
-            SELECT
-                2 AS ordem,
-                MAX(substr(mes_competencia, 1, 4) || '-' || substr(mes_competencia, 5, 2) || '-01')::DATE AS data_competencia,
-                'BPC' AS base_dados
-            FROM benef_federais.bpc
-        )
-        , seguro_defeso AS (
-            SELECT
-                3 AS ordem,
-                MAX(substr(mes_referencia, 1, 4) || '-' || substr(mes_referencia, 5, 2) || '-01')::DATE AS data_competencia,
-                'Seguro Defeso' AS base_dados
-            FROM benef_federais.seguro_defeso
-        )
-        , uniao AS (
-            SELECT * FROM novo_bolsa_familia
-            UNION
-            SELECT * FROM bpc
-            UNION
-            SELECT * FROM seguro_defeso
-        )
-        SELECT
-            ordem,  
-            substr(data_competencia::TEXT, 6,2) || '-' || substr(data_competencia::TEXT, 1,4) AS data_competencia,
-            UPPER(base_dados) as base_dados
-        FROM uniao ORDER BY ordem;
+            WITH
+                novo_bolsa_familia AS (
+                    SELECT
+                        1 AS ordem,
+                        MAX(substr(mes_competencia, 1, 4) || '-' || substr(mes_competencia, 5, 2) || '-01')::DATE AS data_competencia
+                        , 'Novo Bolsa Família' AS base_dados
+                    FROM benef_federais.novo_bolsa_familia
+                )
+                , bpc AS (
+                    SELECT
+                        2 AS ordem,
+                        MAX(substr(mes_competencia, 1, 4) || '-' || substr(mes_competencia, 5, 2) || '-01')::DATE AS data_competencia,
+                        'BPC' AS base_dados
+                    FROM benef_federais.bpc
+                )
+                , seguro_defeso AS (
+                    SELECT
+                        3 AS ordem,
+                        MAX(substr(mes_referencia, 1, 4) || '-' || substr(mes_referencia, 5, 2) || '-01')::DATE AS data_competencia,
+                        'Seguro Defeso' AS base_dados
+                    FROM benef_federais.seguro_defeso
+                )
+                , servidores AS (
+                    SELECT
+                        4 AS ordem,
+                        max(data_insert)::DATE AS data_competencia,
+                        'SERVIDORES' AS base_dados
+                    FROM servidores.servidores_cruzamento        
+                )
+                , uniao AS (
+                    SELECT * FROM novo_bolsa_familia
+                    UNION
+                    SELECT * FROM bpc
+                    UNION
+                    SELECT * FROM seguro_defeso
+                    UNION
+                    SELECT * FROM servidores
+                )
+                SELECT
+                    ordem,  
+                    substr(data_competencia::TEXT, 6,2) || '-' || substr(data_competencia::TEXT, 1,4) AS data_competencia,
+                    UPPER(base_dados) as base_dados
+                FROM uniao ORDER BY ordem;
         '''
 
         df = pd.read_sql(query, self.db_engine)
-       
-        
-        # # Alretar para datetime
-        # df['data_competencia'] = pd.to_datetime( df['data_competencia'], errors='coerce')    
-        
-        print(df.dtypes)
-
-        # Altera o para MM-YYYY
-        # for index, row in df.iterrows():
-        #     df.at[index, 'data_competencia'] = row['data_competencia'].strftime('%m-%Y')
-
-        # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%mm-%YYYY')
-
-        print( df )
 
         return df.to_dict(orient='records')
+
 
 
     def insert_servidores(self, dataframe):
