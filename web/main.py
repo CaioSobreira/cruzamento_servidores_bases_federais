@@ -200,30 +200,6 @@ def realizar_cruzamentos():
 
 
 
-# @app.route('/api/docker')
-# def api_docker():
-#     client_docker.containers.run()
-
-#     bases_conn = BasesResumo() 
-#     dados = bases_conn.data_atualizacao_bases()
-
-#     # df['data_competencia'] = pd.to_datetime(df['data_competencia']).dt.strftime('%m-%Y')
-
-#     return jsonify(dados)
-
-
-
-
-
-
-@app.route("/teste")
-def route_main():
-    print(UPLOAD_FOLDER)
-    return '<p>Olá</p>'
-
-
-
-
 
 
 #################################################################
