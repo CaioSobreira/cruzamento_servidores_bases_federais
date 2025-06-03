@@ -80,6 +80,25 @@
         </div>
 
 
+        <div class="container mt-4">
+            <div class="card shadow rounded-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Baixar Achados dos Cruzamentos</h3>
+                    <div class="mb-3">
+                        <label for="arquivo" class="form-label">Aqui você pode baixar o resultado do cruzamento realizado.</label>
+                    </div>
+                    <a class="btn btn-primary mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Baixar</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div class="d-flex gap-3">
+            <a class="btn btn-primary mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Baixar Achados</a>
+            <button type="button" onclick="chamarCruzamento();" class="btn btn-success">Realizar Novo Cruzamento</button>
+        </div> -->
+
+
         <h2 class="mt-5">Ações:</h2>
 
         <div class="container mt-4">
@@ -91,19 +110,11 @@
                     </div>
                     <button type="button" class="btn btn-primary mt-2" onclick="chamarCruzamento();">
                         <span id="spinner_atualizar_cruzamento" style="display: none;" class="spinner"></span>
-                        Atualizar
+                        Executar Crruzamento
                     </button>
                 </div>
             </div>
         </div>
-
-
-
-        <!-- <div class="d-flex gap-3">
-            <a class="btn btn-primary mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Baixar Achados</a>
-            <button type="button" onclick="chamarCruzamento();" class="btn btn-success">Realizar Novo Cruzamento</button>
-        </div> -->
-
 
 
         <div class="container mt-4">
@@ -111,7 +122,7 @@
                 <div class="card-body">
                     <h3 class="card-title mb-4">Atualização de Bases Sociais</h3>
                     <div class="mb-3">
-                        <label for="arquivo" class="form-label">Atualiza as Bases de Befefícios Federais.</label>                            
+                        <label for="arquivo" class="form-label">Atualiza as Bases de Befefícios Federais.</br>Obs.: As bases são grande pode levar alguns minutos cara seu carregamento.</label>
                     </div>
                     <button type="button" class="btn btn-primary mt-2" onclick="atualizarBaseFederal();">
                         <span id="spinner_atualizar_base_social" style="display: none;" class="spinner"></span>

@@ -1,4 +1,6 @@
 venv
 web/uploads/*
+__pycache__*
+__pycache__
 
 !.gitkeep
