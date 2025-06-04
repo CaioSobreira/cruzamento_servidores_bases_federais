@@ -1,4 +1,5 @@
 import pandas as pd
+from sqlalchemy import text
 from bd import get_engine_sqlalchemy
 from app_log.AppLog import AppLog
 
@@ -141,7 +142,9 @@ def _cruzamento_seguro_defeso(engine):
     return pd.read_sql(query, engine)
 
 
-
+# =================================================================================================
+# REALIZA TODOS OS CRUZAMENTO DE SERVIDORES COM OS DADOS
+# =================================================================================================
 def executa_cruzamentos():
     try:
         log.info("# executa_cruzamentos - CRUZAMENTO DE DADOS INICIADO")
@@ -159,10 +162,33 @@ def executa_cruzamentos():
         log.info("#==> EXPORTANDO RESULTADOS - PLANILHA XLSX")
         with pd.ExcelWriter("resultados/resultados_cruzamentos.xlsx") as writer:
 
-            df_bolsa_familia.to_excel(writer, sheet_name="Bolsa Familia", index=False)
-            df_bpc.to_excel(writer, sheet_name="BPC", index=False)
-            df_seguro_defeso.to_excel(writer, sheet_name="Seguro Defeso", index=False)
+            df_bolsa_familia.to_excel(
+                writer, 
+                sheet_name="Bolsa Familia", 
+                index=False
+            )
+            
+            df_bpc.to_excel(
+                writer, 
+                sheet_name="BPC", 
+                index=False
+            )
+
+            df_seguro_defeso.to_excel(
+                writer, 
+                sheet_name="Seguro Defeso", 
+                index=False
+            )
         
+        log.info("#==> SALVAR NO BANCO DE DADOS - BOLSA FAMÍLIA")
+        _salvar_resultados_bolsa_familia(df_bolsa_familia)
+        
+        log.info("#==> SALVAR NO BANCO DE DADOS - BPC")
+        _salvar_resultados_bpc(df_bpc)
+       
+        log.info("#==> SALVAR NO BANCO DE DADOS - SEGURO DEFESO")
+        _salvar_resultados_seguro_defeso(df_seguro_defeso)
+
         log.info("#==> CRUZAMENTO DE DADOS FINALIZADO")
         return True
     except Exception as erro:
@@ -171,19 +197,21 @@ def executa_cruzamentos():
 
 
 
+# =================================================================================================
+# REALIZA O CRUZAMENTO DE SERVIDORES COM OS DADOS DE BOLSA FAMÍLIA
+# =================================================================================================
 def cruzamentos_bolsa_familia():
-    # print("######## CRUZAMENTO DE DADOS INICIADO")
     engine = get_engine_sqlalchemy()
-
-    # print("###### EXECUTANDO CRUZAMENTO - SERVIDORES X BOLSA FAMILIA")
+    
     df_bolsa_familia = _cruzamento_bolsa_familia(engine=engine)
-
-    # print("######## CRUZAMENTO DE DADOS FINALIZADO")
 
     return df_bolsa_familia
 
 
 
+# =================================================================================================
+# REALIZA O CRUZAMENTO DE SERVIDORES COM OS DADOS DO BPC
+# =================================================================================================
 def cruzamentos_bpc():
     # print("######## CRUZAMENTO DE DADOS INICIADO")
     engine = get_engine_sqlalchemy()
@@ -197,6 +225,9 @@ def cruzamentos_bpc():
 
 
 
+# =================================================================================================
+# REALIZA O CRUZAMENTO DE SERVIDORES COM OS DADOS DO SEGURO DEFESO
+# =================================================================================================
 def cruzamentos_seguro_defeso():
     # print("######## CRUZAMENTO DE DADOS INICIADO")
     engine = get_engine_sqlalchemy()
@@ -207,3 +238,78 @@ def cruzamentos_seguro_defeso():
     # print("######## CRUZAMENTO DE DADOS FINALIZADO")
 
     return df_seguro_defeso
+
+
+
+# =================================================================================================
+# SALVAR RESULTADOS DO CRUZAMENTO NO BANCO DE DADOS - BOLSA FAMILIA
+# =================================================================================================
+def _salvar_resultados_bolsa_familia(df):
+    schema = 'resultados'
+    tabela = 'novo_bolsa_familia'
+    
+    _trucar_tabela(schema=schema, tabela=tabela)
+
+    df.to_sql( 
+        name=tabela, 
+        schema= schema, 
+        chunksize=1000, 
+        con= get_engine_sqlalchemy(), 
+        if_exists='append', 
+        index=False
+    )
+
+
+
+# =================================================================================================
+# SALVAR RESULTADOS DO CRUZAMENTO NO BANCO DE DADOS - BPC
+# =================================================================================================
+def _salvar_resultados_bpc(df):
+    schema = 'resultados'
+    tabela = 'bpc'
+    
+    _trucar_tabela(schema=schema, tabela=tabela)
+
+    df.to_sql(
+        name=tabela, 
+        schema= schema, 
+        chunksize=1000, 
+        con= get_engine_sqlalchemy(), 
+        if_exists='append', 
+        index=False 
+    )
+
+
+
+# =================================================================================================
+# SALVAR RESULTADOS DO CRUZAMENTO NO BANCO DE DADOS - SEGURO DEFESO
+# =================================================================================================
+def _salvar_resultados_seguro_defeso(df):
+    schema = 'resultados'
+    tabela = 'seguro_defeso'
+    
+    _trucar_tabela(schema=schema, tabela=tabela)
+
+    df.to_sql( 
+        name=tabela, 
+        schema= schema, 
+        chunksize=1000, 
+        con= get_engine_sqlalchemy(), 
+        if_exists='append', 
+        index=False
+    )
+    
+
+
+
+# =================================================================================================
+# FUNÇÃO PARA APAGAR OS REGISTROS DA TABELA
+# =================================================================================================
+def _trucar_tabela(schema, tabela ):
+    engine = get_engine_sqlalchemy()
+    query = f'TRUNCATE TABLE {schema}.{tabela};'
+
+    with engine.connect() as conn:
+        conn.execute(text(query))
+        conn.commit() 
+

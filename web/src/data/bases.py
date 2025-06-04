@@ -76,6 +76,9 @@ class BasesResumo:
 
 
 
+    # ================================================================================================
+    # REALIZAR CARGA DOS SERVIDORES QUE SERAM ALVO DO CRUZAMENTO
+    # ================================================================================================
     def insert_servidores(self, dataframe):
         query = text( """INSERT INTO servidores.servidores_cruzamento (nome, cpf, pis_pasep, vinculos, remuneracao_bruta) VALUES(:nome, :cpf, :pis_pasep, :vinculos, :remuneracao_bruta)""" ) 
 
@@ -91,13 +94,17 @@ class BasesResumo:
             print("DADOS DOS SERVIDORES INSERIDOS")
 
 
+
+    # ================================================================================================
+    # RETORNA O RESUMO DOS ACHADOS DO CRUZAMENTO
+    # ================================================================================================
     def base_resultados_resumo(self):
         query = '''
                 SELECT 
                     to_char(MAX(data_insert), 'DD/MM/YYYY HH24:MI:SS') as data_cruzamento, 
                     'Novo Bolsa Família' as base, 
                     COUNT(*) AS qtd
-                FROM resultados.seguro_defeso
+                FROM resultados.novo_bolsa_familia
                 UNION
                 SELECT 
                     to_char(MAX(data_insert), 'DD/MM/YYYY HH24:MI:SS') as data_cruzamento, 
