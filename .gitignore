@@ -3,3 +3,5 @@ env
 __pycache__
 # .env
 .venv
+app/app_log.csv
+web/app_log/app_log.csv

@@ -1,9 +1,10 @@
 from src.db.Connection import Connection
 from sqlalchemy import text
 import pandas as pd
+from app_log.AppLog import AppLog
 
-# from src.Connection import Connection
-# from src.data.DataDespacho import DataDespacho
+log = AppLog(name="web web/src/data/bases.py").get_logger()
+
 
 
 
@@ -80,18 +81,32 @@ class BasesResumo:
     # REALIZAR CARGA DOS SERVIDORES QUE SERAM ALVO DO CRUZAMENTO
     # ================================================================================================
     def insert_servidores(self, dataframe):
-        query = text( """INSERT INTO servidores.servidores_cruzamento (nome, cpf, pis_pasep, vinculos, remuneracao_bruta) VALUES(:nome, :cpf, :pis_pasep, :vinculos, :remuneracao_bruta)""" ) 
+        # query = text( """INSERT INTO servidores.servidores_cruzamento (nome, cpf, pis_pasep, vinculos, remuneracao_bruta) VALUES(:nome, :cpf, :pis_pasep, :vinculos, :remuneracao_bruta)""" ) 
 
-        dataframe = dataframe.to_records(index=False).tolist()
-
+        log.info('insert_servidores() - apagando servidores antigos')
+        # dataframe = dataframe.to_records(index=False).tolist()
         with self.db_engine.connect() as conn:
             # LIMPA A BASE 
             conn.execute( text( 'DELETE FROM servidores.servidores_cruzamento' ))
-            # ADICIONA OS SERVIDORES DA PLANILHA
-            conn.execute( query, [  dict( nome=nome, cpf=cpf, pis_pasep=pis_pasep, vinculos=vinculos, remuneracao_bruta=remuneracao_bruta) for  nome, cpf, pis_pasep, vinculos, remuneracao_bruta in dataframe]  )
-            conn.commit()
 
-            print("DADOS DOS SERVIDORES INSERIDOS")
+        log.info('insert_servidores() - executando carga dos novos')
+        dataframe.to_sql( 
+            name      = 'servidores_cruzamento', 
+            schema    = 'servidores', 
+            index     = False, 
+            chunksize = 1000, 
+            con       = self.db_engine, 
+            if_exists = 'append' 
+        )
+
+        # with self.db_engine.connect() as conn:
+        #     # LIMPA A BASE 
+        #     conn.execute( text( 'DELETE FROM servidores.servidores_cruzamento' ))
+        #     # ADICIONA OS SERVIDORES DA PLANILHA
+        #     conn.execute( query, [  dict( nome=nome, cpf=cpf, pis_pasep=pis_pasep, vinculos=vinculos, remuneracao_bruta=remuneracao_bruta) for  nome, cpf, pis_pasep, vinculos, remuneracao_bruta in dataframe]  )
+        #     conn.commit()
+        log.info('insert_servidores() - concluido')
+        # print("DADOS DOS SERVIDORES INSERIDOS")
 
 
 

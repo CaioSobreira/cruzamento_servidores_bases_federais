@@ -3,11 +3,9 @@ import requests
 import os
 from src.data.bases import BasesResumo
 import pandas as pd
+from app_log.AppLog import AppLog
 
-
-# client_docker = docker.DockerClient(base_url="unix://var/run/docker.sock")
-
-
+log = AppLog(name="web main.py").get_logger()
 # ================================================================================================
 #                       FALTA FAZER
 # ================================================================================================
@@ -73,6 +71,8 @@ def upload_servidores():
     
     file = request.files['arquivo']
 
+    log.info(f'rota: /upload_servidores receber arquivo {file}')
+
     if file.filename == '':
         return "Nome do arquivo vazio"
 
@@ -84,30 +84,40 @@ def upload_servidores():
         caminho = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(caminho)
 
+        log.info(f'rota: /upload_servidores passou de salvar arquivo local')
+
         try:
             if ext == 'csv':
-                df = pd.read_csv(caminho)
+                df = pd.read_csv(caminho, delimiter=';')
             if ext == 'xlsx':
                 df = pd.read_excel(caminho)
             if ext == 'xls':
                 df = pd.read_excel(caminho)
         except Exception as e:
+            log.error(f'rota: /upload_servidores ao ler o excel')
             return f"Erro ao processar arquivo: {e}"
 
         # Exibe as 5 primeiras linhas no console
         print(df.head())
 
+        log.info(f'rota: /upload_servidores innicializar insert no banco de dados')
         database = BasesResumo()
         database.insert_servidores(dataframe=df)
 
         mensagem = f"Arquivo {file.filename} enviado e processado com sucesso!"
+        return jsonify({
+            "msg": mensagem
+        }), 200
         # _pagina_resultado_processo(is_sucesso=True, mensagem=mensagem)
-        return render_template('resultado_processo.html', mensagem=mensagem, status=True)
+        # return render_template('resultado_processo.html', mensagem=mensagem, status=True)
         # return f"Arquivo {file.filename} enviado e processado com sucesso!"
     else:
         mensagem = "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
+        return jsonify({
+            "msg": mensagem
+        }), 422
         # _pagina_resultado_processo(is_sucesso=False, mensagem=mensagem)
-        return render_template('resultado_processo.html', mensagem=mensagem, status=False)
+        # return render_template('resultado_processo.html', mensagem=mensagem, status=False)
         # return "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
 
 
