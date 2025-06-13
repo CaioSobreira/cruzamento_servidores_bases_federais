@@ -18,7 +18,7 @@ Este projeto inclui um modo de teste, por meio do qual é realizada uma simulaç
 ---
 ## Requisitos:
 
-### instalação Recomendada:
+### Instalação Recomendada:
 
 | Componente            | Observação                                 |
 |:----------------------|--------------------------------------------|
@@ -42,7 +42,7 @@ Este projeto inclui um modo de teste, por meio do qual é realizada uma simulaç
 
 ### Possibilidades de instalação no VirtualBox:
 
-É possivel instalar o Linux Ubuntu Desktop/Server usando o [VirtualBox](https://www.virtualbox.org/).
+É possível instalar o Linux Ubuntu Desktop/Server usando o [VirtualBox](https://www.virtualbox.org/).
 
 | Componente  | Observação                                 |
 |:------------|--------------------------------------------|
@@ -56,7 +56,7 @@ Este projeto inclui um modo de teste, por meio do qual é realizada uma simulaç
 
 **Passo 1 - Baixa o código fonte**: 
 
-No repositório do GitHub [https://github.com/CaioSobreira/cruzamento_servidores_bases_federais](https://github.com/CaioSobreira/cruzamento_servidores_bases_federais) é possivel clonar usando o comando:
+No repositório do GitHub [https://github.com/CaioSobreira/cruzamento_servidores_bases_federais](https://github.com/CaioSobreira/cruzamento_servidores_bases_federais) é possível clonar usando o comando:
 
 <code>
 git clone https://github.com/CaioSobreira/cruzamento_servidores_bases_federais.git
@@ -87,7 +87,7 @@ Após Aparecer: "########## EXECUÇÃO INICIADA ##########", o sistema já está
 
 **Passo 3 - Acessar o sistema**: 
 
-Basta abrir o Navegador Web de sua escolha e escrever [http://localhost:5000/](http://localhost:5000/)
+Basta abrir o Navegador Web, de sua escolha, e escrever [http://localhost:5000/](http://localhost:5000/)
 
 
 <img src="manual/img/igm004_manual.png">
