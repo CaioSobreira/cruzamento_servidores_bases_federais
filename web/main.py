@@ -7,16 +7,6 @@ from app_log.AppLog import AppLog
 
 log = AppLog(name="web main.py").get_logger()
 # ================================================================================================
-#                       FALTA FAZER
-# ================================================================================================
-
-# [OK] Página de sucesso de atualização de Servidores 
-# Rodar o Conteiner de Atualização da Bases de Benefícios Sociais e Cruzamento das Bases com servidores
-# Criar um dashboard Básico
-
-
-
-# ================================================================================================
 #                       CONFIG FLASK
 # ================================================================================================
 
@@ -107,19 +97,13 @@ def upload_servidores():
         mensagem = f"Arquivo {file.filename} enviado e processado com sucesso!"
         return jsonify({
             "msg": mensagem
-        }), 200
-        # _pagina_resultado_processo(is_sucesso=True, mensagem=mensagem)
-        # return render_template('resultado_processo.html', mensagem=mensagem, status=True)
-        # return f"Arquivo {file.filename} enviado e processado com sucesso!"
+        }), 200  
     else:
         mensagem = "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
         return jsonify({
             "msg": mensagem
         }), 422
-        # _pagina_resultado_processo(is_sucesso=False, mensagem=mensagem)
-        # return render_template('resultado_processo.html', mensagem=mensagem, status=False)
-        # return "Tipo de arquivo não permitido. Use .csv, .xls ou .xlsx."
-
+  
 
 
 # ================================================================================================

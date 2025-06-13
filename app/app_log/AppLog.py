@@ -5,7 +5,7 @@ from pathlib import Path
 
 class AppLog:
 
-    def __init__( self, name: str = __name__, log_file: str = "app_log.csv", level=logging.DEBUG, max_bytes: int = 1_000_000, backup_count: int = 5 ):
+    def __init__( self, name: str = __name__, log_file: str = "app_log/app_log.csv", level=logging.DEBUG, max_bytes: int = 1_000_000, backup_count: int = 5 ):
         self.logger = logging.getLogger(name)
 
         if not self.logger.handlers:

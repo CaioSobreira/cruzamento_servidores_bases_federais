@@ -3,59 +3,544 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Página Inicial</title>
+    <title>AuditaSocial - Ferramenta de Auditoria</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #1a3a6c;
+            --secondary: #2c5282;
+            --accent: #0ea5e9;
+            --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #64748b;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #334155;
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .header-container {
+            position: relative;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
         .banner {
             width: 100%;
-            /* max-width: 800px; */
-            margin: auto;
-            display: block;
-            padding-top: 20px;
-        }
-        .card-custom {
-            min-height: 220px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            background: linear-gradient(135deg, #1a3a6c 0%, #2c5282 100%);
             position: relative;
+            overflow: hidden;
+            padding: 0 20px;
+            text-align: center;
         }
-        .card-custom a {
+        
+        .banner::before {
+            content: '';
             position: absolute;
-            bottom: 15px;
-            left: 15px;
-            color: white;
-            text-decoration: underline;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.3) 0%, transparent 40%);
         }
+        
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 30px 0;
+        }
+        
+        .banner h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .banner p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 70px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .stat-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+            padding: 25px 15px;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            background: rgba(14, 165, 233, 0.1);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        .action-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            background: white;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .action-card .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: 600;
+            padding: 18px 25px;
+            border-bottom: none;
+            font-size: 1.1rem;
+        }
+        
+        .action-card .card-body {
+            padding: 25px;
+        }
+        
+        .btn-action {
+            background: linear-gradient(135deg, var(--accent) 0%, #0d94d7 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(14, 165, 233, 0.4);
+        }
+        
+        .btn-action i {
+            margin-right: 8px;
+        }
+        
         .spinner {
             display: inline-block;
             width: 16px;
             height: 16px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #333;
+            border-top: 2px solid var(--accent);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             margin-right: 6px;
             vertical-align: middle;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .dashboard-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .file-upload-box {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            background: #f8fafc;
+            margin-bottom: 20px;
+        }
+        
+        .model-box {
+            background: linear-gradient(135deg, #e0f2fe 0%, #d1e9ff 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+            border: 1px solid #c2e0ff;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            background-color: #f8fafc;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 4px solid var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .status-icon {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .status-not-updated {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border-left: 4px solid #b91c1c;
+        }
+        
+        .status-in-progress {
+            background-color: #fffbeb;
+            color: #b45309;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .status-updated {
+            background-color: #dcfce7;
+            color: #15803d;
+            border-left: 4px solid #10b981;
+        }
+        
+        .benefit-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tag-bf {
+            background: rgba(14, 165, 233, 0.2);
+            color: #0c4a6e;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+        
+        .tag-bpc {
+            background: rgba(16, 185, 129, 0.2);
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .tag-defeso {
+            background: rgba(245, 158, 11, 0.2);
+            color: #854d0e;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .model-header {
+            margin-bottom: 20px;
+        }
+        
+        .model-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .model-subtitle {
+            font-size: 1.05rem;
+            color: #1e40af;
+            font-weight: 500;
+        }
+        
+        .countdown {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: 10px;
+            background: rgba(14, 165, 233, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        .info-text {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .placeholder-value {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .action-card {
+                margin-bottom: 25px;
+            }
+            
+            .banner h1 {
+                font-size: 2.2rem;
+            }
+            
+            .banner p {
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+        }
     </style>
-
 </head>
 
 <body>
-    <div class="container mt-4">
-        <img src="{{ url_for('static', filename='img/banner.png') }}" alt="Banner AuditaSocial"  class="banner mt-0 mb-4">
+    <div class="app-container">
+        <!-- Banner -->
+        <div class="header-container">
+            <div class="banner">
+                <div class="banner-content">
+                    <h1>AUDITASOCIAL</h1>
+                    <p>Ferramenta de auditoria para identificação de casos de fraude no cruzamento de servidores públicos e beneficiários de programas federais</p>
+                </div>
+            </div>
+        </div>
         
-        <h1>Cruzamento de Servidores Públicos Vs. Bases de Benefícios federais</h1>
-        <!-- <h1>Cruzamento de Servidores Públicos Vs. Bases de Benefícios federais</h1> -->
-        <!-- <p class="lead">Bem-vindo ao Sistema</p> -->
-
-
-        <div class="container mt-5">
-            <h2 class="mb-4">Tabela de Cargas</h2>
+        <!-- Dashboard Stats -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-value" id="total-records">--</div>
+                    <div class="stat-label">Registros totais</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-value" id="last-update">--</div>
+                    <div class="stat-label">Última atualização</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="stat-value" id="total-finds">--</div>
+                    <div class="stat-label">Achados totais</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ações Section -->
+        <h2 class="section-title mt-5">Ações</h2>
+        
+        <div class="row">
+            <!-- Atualizar Base de Servidores (Primeiro) -->
+            <div class="col-md-4 mb-4">
+                <div class="action-card">
+                    <div class="card-header">
+                        <i class="fas fa-upload me-2"></i> Atualizar Base de Servidores
+                    </div>
+                    <div class="card-body">
+                        <div class="file-upload-box">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <p class="mb-3">Selecione um arquivo (.csv, .xls, .xlsx)</p>
+                            <input class="form-control" type="file" id="arquivo" accept=".csv, .xls, .xlsx" required>
+                        </div>
+                        <button class="btn btn-action text-white" onclick="enviarPlanilhaServidores()">
+                            <span id="spinner_btn_upload_servidor" style="display: none;" class="spinner"></span>
+                            <i class="fas fa-paper-plane"></i> Enviar Arquivo
+                        </button>
+                        <div id="status-upload" class="mt-3 text-center"></div>
+                        
+                        <!-- Status Indicator -->
+                        <!-- <div class="status-indicator status-not-updated" id="server-status"> -->
+                            <!-- <i class="fas fa-exclamation-circle status-icon"></i> -->
+                            <!-- <span>Base de servidores não atualizada</span> -->
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Atualização de Bases Sociais (Segundo) -->
+            <div class="col-md-4 mb-4">
+                <div class="action-card">
+                    <div class="card-header">
+                        <i class="fas fa-sync-alt me-2"></i> Atualização de Bases Sociais
+                    </div>
+                    <div class="card-body">
+                        <p class="info-text">Esta função atualiza as bases de benefícios federais a partir das fontes oficiais mais recentes. Recomendamos executar esta atualização mensalmente para manter os dados atualizados.</p>
+                        <p class="info-text"><strong>Obs.:</strong> As bases são grandes e podem levar alguns minutos para carregamento.</p>
+                        <button type="button" class="btn btn-action text-white" onclick="atualizarBaseFederal();">
+                            <span id="spinner_atualizar_base_social" style="display: none;" class="spinner"></span>
+                            <i class="fas fa-redo"></i> Atualizar Bases
+                        </button>
+                        
+                        <!-- Status Indicator -->
+                        <!-- <div class="status-indicator status-not-updated" id="social-status"> -->
+                            <!-- <i class="fas fa-exclamation-circle status-icon"></i> -->
+                            <!-- <span>Bases sociais não atualizadas</span> -->
+                        <!-- </div> -->
+                        
+                        <!-- Countdown -->
+                        <!-- <div id="countdown-container" class="countdown" style="display: none;"> -->
+                            <!-- Atualizando as Bases -->
+                            <!-- Atualização será concluída em: <span id="countdown">10:00</span> -->
+                        <!-- </div> -->
+                        
+                        <div class="mt-4">
+                            <span class="benefit-tag tag-bf">Bolsa Família</span>
+                            <span class="benefit-tag tag-bpc">BPC</span>
+                            <span class="benefit-tag tag-defeso">Seguro-Defeso</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Realizar Cruzamento (Terceiro) -->
+            <div class="col-md-4 mb-4">
+                <div class="action-card">
+                    <div class="card-header">
+                        <i class="fas fa-cogs me-2"></i> Realizar Cruzamento
+                    </div>
+                    <div class="card-body">
+                        <p class="info-text">Executa o cruzamento entre a base de servidores públicos e as bases de benefícios federais, identificando possíveis casos de fraude.</p>
+                        <button type="button" class="btn btn-action text-white" onclick="chamarCruzamento();">
+                            <span id="spinner_atualizar_cruzamento" style="display: none;" class="spinner"></span>
+                            <i class="fas fa-play-circle"></i> Executar Cruzamento
+                        </button>
+                        
+                        <!-- Status Indicator -->
+                        <!-- <div class="status-indicator status-not-updated" id="cross-status"> -->
+                            <!-- <i class="fas fa-exclamation-circle status-icon"></i> -->
+                            <!-- <span>Nenhum cruzamento realizado ainda</span> -->
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modelos Section -->
+        <div class="model-box">
+            <div class="model-header">
+                <h5 class="model-title"><i class="fas fa-file-download me-2"></i> Modelos de Arquivos</h5>
+                <div class="model-subtitle">Precisa de um modelo para atualizar a base de servidores?</div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-primary" href="{{ url_for('download', filename='servidores_cruzamento.xlsx') }}">
+                    <i class="fas fa-file-excel me-2"></i> Baixar modelo (.xlsx)
+                </a>
+                <a class="btn btn-outline-primary" href="{{ url_for('download', filename='servidores_cruzamento.csv') }}">
+                    <i class="fas fa-file-csv me-2"></i> Baixar modelo (.csv)
+                </a>
+                <a class="btn btn-outline-primary" href="{{ url_for('download', filename='servidores_cruzamento.xls') }}">
+                    <i class="fas fa-file-excel me-2"></i> Baixar modelo (.xls)
+                </a>
+            </div>
+        </div>
+        
+        <!-- Tabela de Cargas -->
+        <div class="dashboard-section">
+            <h2 class="section-title">Tabela de Cargas</h2>
             <div class="table-responsive">
               <table class="table table-bordered table-hover table-striped align-middle">
                 <thead class="table-dark">
@@ -66,18 +551,18 @@
                   </tr>
                 </thead>
                 <tbody id="tabela-cargas">
+                  <!-- Data will be loaded here -->
                 </tbody>
               </table>
             </div>
         </div>
 
-
-
-        <div class="container mt-4">
-            <h2 class="mb-4">Tabela de Resultados Encontrados</h2>
-
-            <div>
-                <canvas id="myChart" class="mb-4"></canvas>
+        <!-- Resultados de Cruzamentos -->
+        <div class="dashboard-section">
+            <h2 class="section-title">Resultados de Cruzamentos</h2>
+            
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
             </div>
 
             <div class="table-responsive">
@@ -90,327 +575,287 @@
                   </tr>
                 </thead>
                 <tbody id="tabela-cruzamentos">
+                  <!-- Data will be loaded here -->
                 </tbody>
               </table>
             </div>
-        </div>
-
-
-        <div class="container mt-4">
-            <div class="card shadow rounded-4">
-                <div class="card-body">
-                    <h3 class="card-title mb-4">Baixar Achados dos Cruzamentos</h3>
-                    <div class="mb-3">
-                        <label for="arquivo" class="form-label">Aqui você pode baixar o resultado do cruzamento realizado.</label>
-                    </div>
-                    <a class="btn btn-primary mt-2" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">Baixar</a>
-                </div>
-            </div>
-        </div>
-
-
-
-        <h2 class="mt-5">Ações:</h2>
-
-
-
-        <div class="container mt-4">
-            <div class="card shadow rounded-4">
-                <div class="card-body">
-                    <h3 class="card-title mb-4">Realizar Cruzamento</h3>
-                    <div class="mb-3">
-                        <label for="arquivo" class="form-label">Realiza o cruzamento entre a base de servidores e as bases de Benefícios Federais.</label>
-                    </div>
-                    <button type="button" class="btn btn-primary mt-2" onclick="chamarCruzamento();">
-                        <span id="spinner_atualizar_cruzamento" style="display: none;" class="spinner"></span>
-                        Executar Cruzamento
-                    </button>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="container mt-4">
-            <div class="card shadow rounded-4">
-                <div class="card-body">
-                    <h3 class="card-title mb-4">Atualização de Bases Sociais</h3>
-                    <div class="mb-3">
-                        <label for="arquivo" class="form-label">Atualiza as Bases de Befefícios Federais.</br>Obs.: As bases são grande pode levar alguns minutos cara seu carregamento.</label>
-                    </div>
-                    <button type="button" class="btn btn-primary mt-2" onclick="atualizarBaseFederal();">
-                        <span id="spinner_atualizar_base_social" style="display: none;" class="spinner"></span>
-                        Atualizar
-                    </button>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="container mt-4">
-            <div class="card shadow rounded-4">
-                <div class="card-body">
-                    <h3 class="card-title mb-4">Atualização da Base de Servidores</br>Upload de Arquivo</h3>
-        
-                    <div class="mb-3">
-                        <label for="arquivo" class="form-label">Selecione um arquivo (.csv, .xls, .xlsx)</br>Existem modelos do arquivo mais abaixo. 🔽</label>
-                        <input class="form-control" type="file" id="arquivo" accept=".csv, .xls, .xlsx" required>
-                    </div>
-        
-                    <button class="btn btn-primary" onclick="enviarPlanilhaServidores()">
-                        <span id="spinner_btn_upload_servidor" style="display: none;" class="spinner"></span>
-                        Enviar Arquivo
-                    </button>
-        
-                    <div id="status-upload" class="mt-3"></div>
-                </div>
-            </div>
-        </div>
-        
-
-        <div class="container mt-4">
-            <div class="alert alert-info rounded-4 shadow-sm">
-                <strong>Precisa de um modelo?</strong>
-                <br>
-                <a class="btn btn-outline-success mt-2" href="{{ url_for('download', filename='servidores_cruzamento.xlsx') }}">
-                    Baixar modelo (.xlsx)
-                </a>
-                <a class="btn btn-outline-success mt-2" href="{{ url_for('download', filename='servidores_cruzamento.csv') }}">
-                    Baixar modelo (.csv)
-                </a>
-                <a class="btn btn-outline-success mt-2" href="{{ url_for('download', filename='servidores_cruzamento.xls') }}">
-                    Baixar modelo (.xls)
+            
+            <div class="text-center mt-4">
+                <a class="btn btn-action btn-lg text-white" href="{{ url_for('planilha_resultados', filename='resultados_cruzamentos.xlsx') }}">
+                    <i class="fas fa-download"></i> Baixar Resultados Completos
                 </a>
             </div>
         </div>
-
-
-
+        
+        <div class="footer">
+            <div class="app-container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p class="mb-1">© 2025 AuditaSocial. LIMA, Caio; PERRUCCI, Marcelo L.; e FREITAS, Rafael.</p>
+                        <p class="mb-0">Última versão disponível em <a href="https://github.com/CaioSobreira/cruzamento_servidores_bases_federais" class="text-white">https://github.com/CaioSobreira/cruzamento_servidores_bases_federais</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script>
+        // Variáveis globais
+        let myChart = null;
 
-<script>
+      
+        // =================================================================================================
+        // CARREGA A GRÁFICO DE ACHADOS
+        // =================================================================================================
+        let chartAchados = null; // variável global para armazenar o gráfico
 
+        async function carregarGraficoAchados(data) {
+            const ctx = document.getElementById('myChart');
 
-    // =================================================================================================
-    // CARREGA A GRÁFICO DE ACHADOS
-    // =================================================================================================
-    let chartAchados = null; // variável global para armazenar o gráfico
+            // Se já existe um gráfico, destrói antes de criar um novo
+            if (chartAchados) {
+                chartAchados.destroy();
+            }
 
-    async function carregarGraficoAchados(data) {
-        const ctx = document.getElementById('myChart');
+            let data_label = [];
+            let data_values = [];
 
-        // Se já existe um gráfico, destrói antes de criar um novo
-        if (chartAchados) {
-            chartAchados.destroy();
-        }
+            try {
+                data.forEach(row => {
+                    data_label.push(row.base);
+                    data_values.push(row.qtd);
+                });
 
-        let data_label = [];
-        let data_values = [];
-
-        try {
-            data.forEach(row => {
-                data_label.push(row.base);
-                data_values.push(row.qtd);
-            });
-
-            chartAchados = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data_label,
-                    datasets: [{
-                        label: ['Dados: 🔍 Quantidades de Achados no Cruzamento'],
-                        data: data_values,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(255, 159, 64, 0.2)',
-                            'rgba(153, 102, 255, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgb(255, 99, 132)',
-                            'rgb(255, 159, 64)',
-                            'rgb(153, 102, 255)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                chartAchados = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data_label,
+                        datasets: [{
+                            label: ['Dados: 🔍 Quantidades de Achados no Cruzamento'],
+                            data: data_values,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(153, 102, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 159, 64)',
+                                'rgb(153, 102, 255)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar gráfico de barras:', error);
+            }
+        }
+
+
+
+
+        // =================================================================================================
+        // CHAMAR CRUZAMENTO DE DADOS ENTRE BASES
+        // =================================================================================================
+        async function chamarCruzamento() {
+            id_spinner = "spinner_atualizar_cruzamento";
+            
+            spinner_habilitar(id_spinner)
+
+            try {
+                const response = await fetch('/cruzamento');
+
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar os dados');
                 }
-            });
 
-        } catch (error) {
-            console.error('Erro ao carregar gráfico de barras:', error);
+                const data = await response.json();
+                console.log(data);
+
+                await carregarTabelaCruzamentos();
+                
+            } catch (error) {
+                console.error('Erro ao carregar os dados da tabela:', error);
+            }
+
+            spinner_desabilitar(id_spinner)
         }
-    }
 
 
 
+        // =================================================================================================
+        // CARREGA A TABELA HTML DAS BASES DE DADOS E SUAS COMPETÊNCIAS
+        // =================================================================================================
+        async function carregarTabelaCargas() {
+            let total_registros = 0;
 
-    // =================================================================================================
-    // CHAMAR CRUZAMENTO DE DADOS ENTRE BASES
-    // =================================================================================================
-    async function chamarCruzamento() {
-        id_spinner = "spinner_atualizar_cruzamento";
+            try {
+                const response = await fetch('/api/cargas');
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar os dados');
+                }
+                const data = await response.json();
+
+                const tbody = document.getElementById('tabela-cargas');
+                tbody.innerHTML = ''; // Limpa antes de preencher
+
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="text-align: center;">${row.data_competencia}</td>
+                        <td>${row.base_dados}</td>
+                        <td style="text-align: right;">${ new Intl.NumberFormat('pt-BR').format(Number(row.qtd_registros)) }</td>
+                    `;
+                    tbody.appendChild(tr);
+
+                    total_registros = total_registros + row.qtd_registros;
+                });
+
+                // carrega o total de registros
+                const visual_total_registros = document.getElementById('total-records');
+                visual_total_registros.innerHTML = ''; // Limpa antes de preencher
+                visual_total_registros.innerHTML = new Intl.NumberFormat('pt-BR').format(Number(total_registros)); 
+
+            } catch (error) {
+                console.error('Erro ao carregar os dados da tabela:', error);
+            }
+        }
+
+
+        // =================================================================================================
+        // CARREGA A TABELA HTML DOS ACHADOS DO CRUZAMENTO
+        // =================================================================================================
+        async function carregarTabelaCruzamentos() {
+            let numero_achados = 0;
+            let data_ultimo_cruzamento = null;
+
+            try {
+                const response = await fetch('/api/resultadoscruzamentos');
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar os dados');
+                }
+                const data = await response.json();
+
+                const tbody = document.getElementById('tabela-cruzamentos');
+                tbody.innerHTML = ''; // Limpa antes de preencher
+
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="text-align: center;">${row.data_cruzamento}</td>
+                        <td>${row.base}</td>
+                        <td style="text-align: center;">${row.qtd}</td>
+                    `;
+                    tbody.appendChild(tr);
+
+
+                    numero_achados = numero_achados + row.qtd;
+
+                    if( row.data_cruzamento !== null ){
+                        data_ultimo_cruzamento = row.data_cruzamento;            
+                    } 
+                });
+
+                // Carregar total de Achados
+                const total_achados = document.getElementById('total-finds');
+                total_achados.innerHTML = ''; // Limpa antes de preencher
+                total_achados.innerHTML = new Intl.NumberFormat('pt-BR').format(Number( numero_achados ));            
+
+                // Carrega data da última alualização
+                if(data_ultimo_cruzamento !== null){
+                    const vs_dt_ult_atualizacao = document.getElementById('last-update');
+                    vs_dt_ult_atualizacao.innerHTML = ''; // Limpa antes de preencher
+                    vs_dt_ult_atualizacao.innerHTML = data_ultimo_cruzamento;            
+                }
+
+                // Carrega Gráfico dos achados
+                await carregarGraficoAchados(data);
+                
+            } catch (error) {
+                console.error('Erro ao carregar os dados da tabela:', error);
+            }
+            
+        }
+
         
-        spinner_habilitar(id_spinner)
+        // =================================================================================================
+        // FUNÇÃO QUE ATUALIZA A BASE DE BENEFÍCIOS FEDERAIS NO BANCO DE DADOS 
+        // =================================================================================================
+        async function atualizarBaseFederal() {
+            id_spinner = "spinner_atualizar_base_social";
+            spinner_habilitar(id_spinner)
+            try {
+                const response = await fetch('/update');
 
-        try {
-            const response = await fetch('/cruzamento');
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar os dados');
+                }
 
-            if (!response.ok) {
-                throw new Error('Erro ao buscar os dados');
+                const data = await response.json();
+                console.log(data);
+
+                await carregarTabelaCargas();
+                
+            } catch (error) {
+                console.error('Erro ao carregar os dados da tabela:', error);
             }
 
-            const data = await response.json();
-            console.log(data);
-
-            await carregarTabelaCruzamentos();
-            
-        } catch (error) {
-            console.error('Erro ao carregar os dados da tabela:', error);
+            spinner_desabilitar(id_spinner)
         }
 
-        spinner_desabilitar(id_spinner)
-    }
 
 
+        // =================================================================================================
+        // ENVIA PLANILHA DE SERVIDORES PARA BASE DE DADOS
+        // =================================================================================================
+        async function enviarPlanilhaServidores() {
+            const id_spinner = "spinner_btn_upload_servidor";
+            const input = document.getElementById('arquivo');
+            const status = document.getElementById('status-upload');
 
-    // =================================================================================================
-    // CARREGA A TABELA HTML DAS BASES DE DADOS E SUAS COMPETÊNCIAS
-    // =================================================================================================
-    async function carregarTabelaCargas() {
-        try {
-            const response = await fetch('/api/cargas');
-            if (!response.ok) {
-                throw new Error('Erro ao buscar os dados');
-            }
-            const data = await response.json();
+            spinner_habilitar(id_spinner);
 
-            const tbody = document.getElementById('tabela-cargas');
-            tbody.innerHTML = ''; // Limpa antes de preencher
-
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="text-align: center;">${row.data_competencia}</td>
-                    <td>${row.base_dados}</td>
-                    <td style="text-align: right;">${row.qtd_registros}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar os dados da tabela:', error);
-        }
-    }
-
-
-    // =================================================================================================
-    // CARREGA A TABELA HTML DOS ACHADOS DO CRUZAMENTO
-    // =================================================================================================
-    async function carregarTabelaCruzamentos() {
-        try {
-            const response = await fetch('/api/resultadoscruzamentos');
-            if (!response.ok) {
-                throw new Error('Erro ao buscar os dados');
-            }
-            const data = await response.json();
-
-            const tbody = document.getElementById('tabela-cruzamentos');
-            tbody.innerHTML = ''; // Limpa antes de preencher
-
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="text-align: center;">${row.data_cruzamento}</td>
-                    <td>${row.base}</td>
-                    <td style="text-align: center;">${row.qtd}</td>
-                `;
-                tbody.appendChild(tr);
-
-            });
-
-            // Carrega Gráfico dos achados
-            await carregarGraficoAchados(data);
-            
-        } catch (error) {
-            console.error('Erro ao carregar os dados da tabela:', error);
-        }
-        
-    }
-
-     
-    // =================================================================================================
-    // FUNÇÃO QUE ATUALIZA A BASE DE BENEFÍCIOS FEDERAIS NO BANCO DE DADOS 
-    // =================================================================================================
-    async function atualizarBaseFederal() {
-        id_spinner = "spinner_atualizar_base_social";
-        spinner_habilitar(id_spinner)
-        try {
-            const response = await fetch('/update');
-
-            if (!response.ok) {
-                throw new Error('Erro ao buscar os dados');
+            if (input.files.length === 0) {
+                status.textContent = "Nenhum arquivo selecionado.";
+                return;
             }
 
-            const data = await response.json();
-            console.log(data);
+            const formData = new FormData();
+            formData.append('arquivo', input.files[0]);
 
-            await carregarTabelaCargas();
-            
-        } catch (error) {
-            console.error('Erro ao carregar os dados da tabela:', error);
+            try {
+                const response = await fetch('/upload_servidores', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Erro no upload");
+                }
+
+                const data = await response.text(); // ou await response.json() se for JSON
+                status.textContent = "Upload feito com sucesso!";
+                console.log(data);
+
+                await carregarTabelaCargas();
+                await spinner_desabilitar(id_spinner); 
+
+            } catch (err) {
+                status.textContent = "Erro no upload: " + err.message;
+            }               
         }
-
-        spinner_desabilitar(id_spinner)
-    }
-
-
-
-    // =================================================================================================
-    // ENVIA PLANILHA DE SERVIDORES PARA BASE DE DADOS
-    // =================================================================================================
-    async function enviarPlanilhaServidores() {
-        const id_spinner = "spinner_btn_upload_servidor";
-        const input = document.getElementById('arquivo');
-        const status = document.getElementById('status-upload');
-
-        spinner_habilitar(id_spinner);
-
-        if (input.files.length === 0) {
-            status.textContent = "Nenhum arquivo selecionado.";
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('arquivo', input.files[0]);
-
-        try {
-            const response = await fetch('/upload_servidores', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error("Erro no upload");
-            }
-
-            const data = await response.text(); // ou await response.json() se for JSON
-            status.textContent = "Upload feito com sucesso!";
-            console.log(data);
-
-            await carregarTabelaCargas();
-            await spinner_desabilitar(id_spinner); 
-
-        } catch (err) {
-            status.textContent = "Erro no upload: " + err.message;
-        }               
-    }
 
 
 
@@ -418,48 +863,43 @@
 // FUNÇÕES AUXILIARES PARA MANIPULAÇÃO DO DOM
 // =================================================================================================
 
-    // =================================================================================================
-    // HABILITA O SPINNER DE CARREGAMENTO
-    // =================================================================================================
-    async function spinner_habilitar(id_spinner) {
-        const spinner = document.getElementById(id_spinner);
-        
-        spinner.style.display = "inline-block";
-    }
+        // =================================================================================================
+        // HABILITA O SPINNER DE CARREGAMENTO
+        // =================================================================================================
+        async function spinner_habilitar(id_spinner) {
+            const spinner = document.getElementById(id_spinner);
+            
+            spinner.style.display = "inline-block";
+        }
 
 
-    // =================================================================================================
-    // DESABILITA O SPINNER DE CARREGAMENTO
-    // =================================================================================================
-    async function spinner_desabilitar(id_spinner) {
-        const spinner = document.getElementById(id_spinner);
-        
-        spinner.style.display = "none";        
-    }
+        // =================================================================================================
+        // DESABILITA O SPINNER DE CARREGAMENTO
+        // =================================================================================================
+        async function spinner_desabilitar(id_spinner) {
+            const spinner = document.getElementById(id_spinner);
+            
+            spinner.style.display = "none";        
+        }
 
 
+      
+      
+      
 
-
-// =================================================================================================
-// INICIALIZAÇÃO DA PÁGINA
-// =================================================================================================
-
-    // =================================================================================================
-    // CARREGA AS TABELAS HTML COM OS DADOS ATUAIS
-    // =================================================================================================
-    window.onload = function () {
-        carregarTabelaCargas();
-        carregarTabelaCruzamentos();
-    };
-   
-
-</script>
-
-
+        // =================================================================================================
+        // INICIALIZAÇÃO DA PÁGINA
+        // =================================================================================================
+        window.onload = function () {
+            // Carregar tabela de cargas imediatamente
+            carregarTabelaCargas();
+            
+            // Carregar tabela de cruzamentos vazia
+            carregarTabelaCruzamentos();
+            
+            // Inicializar gráfico vazio
+            carregarGraficoAchados([]);
+        };
+    </script>
 </body>
 </html>
-
-
-
-
-

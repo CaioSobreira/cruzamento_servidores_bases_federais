@@ -11,8 +11,6 @@ log = AppLog(name="main.py").get_logger()
 log.info("########## EXECUÇÃO INICIADA ##########")
 
 
-
-
 app = FastAPI()
 
 
@@ -51,75 +49,4 @@ def realizar_cruzamento():
         log.error(txt_erro)
         return JSONResponse(content={"mensagem": txt_erro}, status_code=422)
             
-
-
-# @app.post("/api/cruzamento")
-# async def rodar_cruzamentos(request: Request):
-#     corpo = await request.json()
-#     nome = corpo.get("chave", "").strip()
-
-#     if not nome:
-#         raise HTTPException(
-#             status_code=400,
-#             detail="O campo 'nome' é obrigatório e não pode estar vazio."
-#         )
-
-    
-
-#     return {"mensagem": f"Bem-vindo(a), {nome}!"}
-
-
-
-
-
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: str = None):
-#     return {"item_id": item_id, "q": q}
-
-
-
-
-
-
-# import time
-# while True:
-#     time.sleep(5)
-
-
-
-# etl_bases_federais()
-
-
-# etl_base_servidores()
-# executa_cruzamentos()
-
-# res_bolsa_familia = BolsaFamilia()
-# res_bolsa_familia.apagar_registros()
-# res_bolsa_familia.carga_tabela()
-
-# res_bpc = BPC()
-# res_bpc.apagar_registros()
-# res_bpc.carga_tabela()
-
-# res_seg_def = SeguroDefeso()
-# res_seg_def.apagar_registros()
-# res_seg_def.carga_tabela()
-
-
-
-
-
-
-
-
-
-# print("########## EXECUÇÃO FINALIZADA")
-
-# subprocess.run(["chmod", "-R", "777", "resultados/" ])
-
-
-
-
-
-
 

@@ -48,9 +48,7 @@ services:
     network_mode: host
     command: >
       sh -c "pip install --no-cache-dir -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8081"
-    # command: uvicorn main:app --reload --host 0.0.0.0 --port 8081
-    # sh -c "pip install --no-cache-dir -r requirements.txt && python main.py"
-
+    
 
   db_csbf:
     build: ./database/
@@ -61,8 +59,7 @@ services:
     command: >
       -c min_wal_size=1GB
       -c max_wal_size=4GB
-    volumes:
-      # - ./pgdata:/var/lib/postgresql/data
+    volumes:    
       - ./database/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
